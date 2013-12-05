@@ -10,7 +10,7 @@ local socket = require(cc.PACKAGE_NAME .. ".net.SocketTCP")
 local MessageCenter = class("MessageCenter", socket)
 
 --定义Model需要监听此处定义的事件，然后再分发
-
+MessageCenter.ON_PLAYER_READY = "ON_PLAYER_READY"
 
 --定义服务端的接口
 MessageCenter.ENTER_ROOM_SERVICE = 1
@@ -40,8 +40,5 @@ function MessageCenter:sendMessage(serviceName,data)
 	
 
 end
-
-
-
 
 return MessageCenter
