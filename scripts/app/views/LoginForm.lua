@@ -6,6 +6,8 @@ local LoginForm = class("LoginForm", function()
 	return display.newLayer()
 end)
 
+local httpClient = import("..HttpClient")
+
 LOGIN_FORM_TAG = 2
 LOGIN_FORM_ZORDER = 1
 
@@ -15,13 +17,12 @@ function LoginForm:ctor()
 	local bg = display.newSprite("#loginbg.png", display.cx, display.cy - 50):addTo(self)
 	local bgWidth = bg:getContentSize().width
 	local bgHeight = bg:getContentSize().height
-	print(bgWidth,bgHeight)
 	--add radio
 
 	--add editbox 
-	local loginNameInput = ui.newEditBox({
+	self.loginName = ui.newEditBox({
 		image = "#input.png",
-		size = cc.size(700,110),
+		size = cc.size(330,50),
         listener = function(event, editbox)
             if event == "began" then
                 self:onEditBoxBegan(editbox)
@@ -36,28 +37,32 @@ function LoginForm:ctor()
             end
         end
 		})
-	:align(display.CENTER_RIGHT, display.cx + 180, display.cy)
-	loginNameInput:setFontSize(100)
-	loginNameInput:setFontColor(display.COLOR_BLACK)
+	:align(display.CENTER_LEFT, display.cx - bgWidth/2 + 150, display.cy)
+	:addTo(self)
+	self.loginName:setFontSize(100)
+	self.loginName:setFontColor(display.COLOR_BLACK)
 	
-	loginNameInput:setPlaceHolder("请输入用户名")
-	loginNameInput:setPlaceholderFontSize(10)
-	loginNameInput:setPlaceholderFontColor(ccc3(128, 128, 128))
-	loginNameInput:setInputMode(kEditBoxInputModeSingleLine)
+	self.loginName:setPlaceHolder("请输入用户名")
+	self.loginName:setPlaceholderFontSize(10)
+	self.loginName:setPlaceholderFontColor(ccc3(128, 128, 128))
+	self.loginName:setInputMode(kEditBoxInputModeSingleLine)
 
-	self:addChild(loginNameInput)
 	--add random button
-	 cc.ui.UIPushButton.new({
+	cc.ui.UIPushButton.new({
 			normal = "#randombtn.png",
     		pressed = "#randombtn_active.png",
     		disabled = "#randombtn_active.png"
 		})
-	 :onButtonClicked(function(event)
+	 :onButtonClicked(function(e)
 			--todo generate random name from server
-			local button = event.target
+			local button = e.target
+			
+			httpClient.new(function (data)
+				self.loginName:setText(data)
+			 end, SLS_SERVER_HOST .. "/player/randomName"):start()
 
 		end)
-	 :align(display.CENTER_LEFT, display.cx + 200, display.cy)
+	 :align(display.CENTER_RIGHT, display.cx + bgWidth/2 - 150, display.cy)
 	 :addTo(self)
 
 	--add login button
@@ -69,13 +74,20 @@ function LoginForm:ctor()
 	:onButtonClicked(function(event) 
 		--todo : get device id from luaj or luaoc
 		--todo : login with given name 
-		local button = event.target
-		local loginName = loginNameInput:getText()
-		local http = network.createHTTPRequest(function (data) 
-			print(data.status) 
-			end , "http://www.baidu.com", "GET")
+			local button = event.target
+			local loginName = self.loginName:getText()
+			if loginName and string.trim(loginName) then
+				httpClient.new(function(event)
+					end,SLS_SERVER_HOST.."/player/register",{
+						playerId = device.getOpenUDID(),
+						playerName = loginName,
+						male = 1
+					}):start()
+
+			end	
+
 		end)
-		:align(display.TOP_CENTER, display.cx, display.cy - 100)
+		:align(display.TOP_CENTER, display.cx, display.cy - 70)
 		:addTo(self)
 
 end
@@ -104,5 +116,6 @@ end
 function LoginForm:onExit()
 	self:removeAllEventListeners()
 end
+
 
 return LoginForm
