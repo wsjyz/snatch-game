@@ -1,4 +1,5 @@
 local CommonBackground = import("..views.CommonBackground")
+local MessageCenter = import("..MessageCenter").new("127.0.0.1",9110)
 local SettingMenu = import("..views.SettingMenu")
 local ChooseLevelScene = class("ChooseLevelScene",function ()
 	return display.newScene("ChooseLevelScene")
@@ -19,7 +20,12 @@ function ChooseLevelScene:ctor()
     		disabled = "#xiangshi.png"
 		})
 		:onButtonClicked(function(e) 
-			print("enterNextScene")
+			MessageCenter:sendMessage(MessageCenter.ENTER_ROOM_SERVICE, {
+					userId = "ivan",
+					nickName = "蒋凌峰",
+					awardId = "ROOM110",
+					male = 1
+				})
 			end)
 		:onButtonPressed(function (e) 
 			 e.target:setScale(scale_rate)
