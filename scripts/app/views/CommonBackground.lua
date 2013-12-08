@@ -11,6 +11,8 @@ NODE_ZORDER = 0
 
 function CommonBackground:ctor()
 	local bg = display.newSprite("#bg.png", display.cx, display.cy):addTo(self, NODE_ZORDER, BACKGROUND_TAG)	
+	display.newSprite("#logo.png", display.cx, display.cy + 200)
+	:addTo(self)
 end
 
 return CommonBackground

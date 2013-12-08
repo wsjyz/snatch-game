@@ -16,6 +16,7 @@ function HttpClient:ctor(callback,url,params)
 			self:onResponse(event)
 		end, url, method)
 	if method == "POST" then
+		-- not support table array
 		for key,value in pairs(params) do
 			self.request:addPOSTValue(key, value)
 		end

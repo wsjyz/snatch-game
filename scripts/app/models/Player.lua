@@ -9,7 +9,8 @@ local Player = class("Player", cc.mvc.ModelBase)
 
 --定义属性
 Player.schema = clone(cc.mvc.ModelBase.schema)
-Player.schema["name"] = {"string"}
+Player.schema["playerId"] = {"string",device.getOpenUDID()} --default value is device id 
+Player.schema["playerName"] = {"string"}
 Player.schema["male"] = {"number" , 1}
 Player.schema["experience"] = {"number" , 0} --经验值
 

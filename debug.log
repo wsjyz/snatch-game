@@ -19,81 +19,60 @@ Cocos2d: lua_loadChunksFromZIP() - loaded chunks count: 58
 Cocos2d: ------------------------------------------------
 Cocos2d: LOAD LUA FILE: /Users/ivan/github/snatch-game/scripts/main.lua
 Cocos2d: ------------------------------------------------
-Cocos2d: [0.0100] [INFO] 
-Cocos2d: [0.0100] [INFO] # DEBUG                        = 2
-Cocos2d: [0.0100] [INFO] #
-Cocos2d: [0.0101] [INFO] # device.platform              = mac
-Cocos2d: [0.0101] [INFO] # device.model                 = unknown
-Cocos2d: [0.0101] [INFO] # device.language              = en
-Cocos2d: [0.0101] [INFO] # device.writablePath          = /Users/ivan/github/snatch-game/
-Cocos2d: [0.0101] [INFO] # device.cachePath             = /Users/ivan/github/snatch-game/
-Cocos2d: [0.0101] [INFO] # device.directorySeparator    = /
-Cocos2d: [0.0101] [INFO] # device.pathSeparator         = :
-Cocos2d: [0.0101] [INFO] #
-Cocos2d: [0.0113] [INFO] # CONFIG_SCREEN_AUTOSCALE      = FIXED_WIDTH
-Cocos2d: [0.0113] [INFO] # CONFIG_SCREEN_WIDTH          = 960.00
-Cocos2d: [0.0113] [INFO] # CONFIG_SCREEN_HEIGHT         = 640.00
-Cocos2d: [0.0113] [INFO] # display.widthInPixels        = 960.00
-Cocos2d: [0.0113] [INFO] # display.heightInPixels       = 640.00
-Cocos2d: [0.0113] [INFO] # display.contentScaleFactor   = 1.00
-Cocos2d: [0.0113] [INFO] # display.width                = 960.00
-Cocos2d: [0.0113] [INFO] # display.height               = 640.00
-Cocos2d: [0.0113] [INFO] # display.cx                   = 480.00
-Cocos2d: [0.0114] [INFO] # display.cy                   = 320.00
-Cocos2d: [0.0114] [INFO] # display.left                 = 0.00
-Cocos2d: [0.0114] [INFO] # display.right                = 960.00
-Cocos2d: [0.0114] [INFO] # display.top                  = 640.00
-Cocos2d: [0.0114] [INFO] # display.bottom               = 0.00
-Cocos2d: [0.0114] [INFO] # display.c_left               = -480.00
-Cocos2d: [0.0114] [INFO] # display.c_right              = 480.00
-Cocos2d: [0.0114] [INFO] # display.c_top                = 320.00
-Cocos2d: [0.0114] [INFO] # display.c_bottom             = -320.00
-Cocos2d: [0.0114] [INFO] #
+Cocos2d: [0.0121] [INFO] 
+Cocos2d: [0.0121] [INFO] # DEBUG                        = 2
+Cocos2d: [0.0121] [INFO] #
+Cocos2d: [0.0122] [INFO] # device.platform              = mac
+Cocos2d: [0.0122] [INFO] # device.model                 = unknown
+Cocos2d: [0.0122] [INFO] # device.language              = en
+Cocos2d: [0.0122] [INFO] # device.writablePath          = /Users/ivan/github/snatch-game/
+Cocos2d: [0.0122] [INFO] # device.cachePath             = /Users/ivan/github/snatch-game/
+Cocos2d: [0.0122] [INFO] # device.directorySeparator    = /
+Cocos2d: [0.0122] [INFO] # device.pathSeparator         = :
+Cocos2d: [0.0122] [INFO] #
+Cocos2d: [0.0138] [INFO] # CONFIG_SCREEN_AUTOSCALE      = FIXED_WIDTH
+Cocos2d: [0.0138] [INFO] # CONFIG_SCREEN_WIDTH          = 960.00
+Cocos2d: [0.0138] [INFO] # CONFIG_SCREEN_HEIGHT         = 540.85
+Cocos2d: [0.0138] [INFO] # display.widthInPixels        = 1136.00
+Cocos2d: [0.0138] [INFO] # display.heightInPixels       = 640.00
+Cocos2d: [0.0138] [INFO] # display.contentScaleFactor   = 1.18
+Cocos2d: [0.0138] [INFO] # display.width                = 960.00
+Cocos2d: [0.0138] [INFO] # display.height               = 540.85
+Cocos2d: [0.0138] [INFO] # display.cx                   = 480.00
+Cocos2d: [0.0138] [INFO] # display.cy                   = 270.42
+Cocos2d: [0.0139] [INFO] # display.left                 = 0.00
+Cocos2d: [0.0139] [INFO] # display.right                = 960.00
+Cocos2d: [0.0139] [INFO] # display.top                  = 540.85
+Cocos2d: [0.0139] [INFO] # display.bottom               = 0.00
+Cocos2d: [0.0139] [INFO] # display.c_left               = -480.00
+Cocos2d: [0.0139] [INFO] # display.c_right              = 480.00
+Cocos2d: [0.0139] [INFO] # display.c_top                = 270.42
+Cocos2d: [0.0139] [INFO] # display.c_bottom             = -270.42
+Cocos2d: [0.0139] [INFO] #
+Cocos2d: [0.1891] [INFO] APPLY LAYOUT layout-2
+Cocos2d: [0.1901] [INFO] APPLY LAYOUT layout-2
+Cocos2d: [0.1902] [INFO] APPLY LAYOUT layout-2
 Cocos2d: [Edit text] content size = (330.000000, 50.000000)
-Cocos2d: [EditBox] pos x = -165.000000, y = 25.000000
+Cocos2d: [EditBox] pos x = -195.249985, y = 29.583332
 Cocos2d: [Edit text] anchor point = (0.000000, 0.500000)
-Cocos2d: [EditBox] pos x = 0.000000, y = 25.000000
-Cocos2d: [EditBox] pos x = 256.000000, y = 345.000000
-Cocos2d: [EditBox] pos x = 256.000000, y = 345.000000
-Cocos2d: [0.2580] [INFO] Scene "LoginScene:onEnter()"
-Cocos2d: [0.7979] [INFO] quest state before start 0
-Cocos2d: [0.7980] [INFO] quest state 2
-Cocos2d: [0.8148] [INFO] quest state onResponse() 3
-Cocos2d: [0.8148] [INFO] REQUEST  COMPLETED
-Cocos2d: [0.8148] [INFO] REQUEST getResponseStatusCode() 200
-Cocos2d: [0.8148] [INFO] REQUEST   getResponseDataLength() = 8
-Cocos2d: [0.8149] [INFO] REQUEST  getResponseString() =
-"裘蘈"
-Cocos2d: [0.8149] [INFO] REQUEST  getResponseData() =
-"裘蘈"
-Cocos2d: [0.8149] [INFO] string
-Cocos2d: [10.2745] [INFO] LUA VM MEMORY USED: 1407.10 KB
-Cocos2d: [20.2781] [INFO] LUA VM MEMORY USED: 1407.20 KB
-Cocos2d: [30.2814] [INFO] LUA VM MEMORY USED: 1407.30 KB
-Cocos2d: [38.5153] [INFO] quest state before start 0
-Cocos2d: [38.5153] [INFO] quest state 2
-Cocos2d: [38.5368] [INFO] quest state onResponse() 5
-Cocos2d: [38.5368] [INFO] REQUEST  COMPLETED
-Cocos2d: [38.5368] [INFO] REQUEST getErrorCode() = 7, getErrorMessage() = Couldn't connect to server
-Cocos2d: [40.2857] [INFO] LUA VM MEMORY USED: 1410.51 KB
-Cocos2d: [50.2896] [INFO] LUA VM MEMORY USED: 1410.61 KB
-Cocos2d: [60.2932] [INFO] LUA VM MEMORY USED: 1410.71 KB
-Cocos2d: [70.2970] [INFO] LUA VM MEMORY USED: 1410.81 KB
-Cocos2d: [80.3027] [INFO] LUA VM MEMORY USED: 1410.91 KB
-Cocos2d: [740.9376] [INFO] LUA VM MEMORY USED: 1411.00 KB
-Cocos2d: [750.9417] [INFO] LUA VM MEMORY USED: 1411.10 KB
-Cocos2d: [760.9456] [INFO] LUA VM MEMORY USED: 1411.20 KB
-Cocos2d: [770.9498] [INFO] LUA VM MEMORY USED: 1411.30 KB
-Cocos2d: [780.9526] [INFO] LUA VM MEMORY USED: 1411.40 KB
-Cocos2d: [790.9566] [INFO] LUA VM MEMORY USED: 1411.50 KB
-Cocos2d: [800.9609] [INFO] LUA VM MEMORY USED: 1411.60 KB
-Cocos2d: [810.9654] [INFO] LUA VM MEMORY USED: 1411.69 KB
-Cocos2d: [820.9692] [INFO] LUA VM MEMORY USED: 1411.79 KB
-Cocos2d: [830.9733] [INFO] LUA VM MEMORY USED: 1411.89 KB
-Cocos2d: [886.1780] [INFO] LUA VM MEMORY USED: 1411.99 KB
-Cocos2d: [896.1818] [INFO] LUA VM MEMORY USED: 1412.09 KB
-Cocos2d: [906.1857] [INFO] LUA VM MEMORY USED: 1412.19 KB
-Cocos2d: [916.1896] [INFO] LUA VM MEMORY USED: 1412.29 KB
-Cocos2d: [926.1936] [INFO] LUA VM MEMORY USED: 1412.38 KB
-Cocos2d: [936.1974] [INFO] LUA VM MEMORY USED: 1412.48 KB
-Cocos2d: [946.2014] [INFO] LUA VM MEMORY USED: 1412.58 KB
+Cocos2d: [EditBox] pos x = 0.000000, y = 29.583332
+Cocos2d: [EditBox] pos x = 302.933319, y = 349.583344
+Cocos2d: [0.1969] loginName getZOrder() 0
+Cocos2d: [0.1974] loginForm vertex 0
+Cocos2d: [EditBox] pos x = 302.933319, y = 349.583344
+Cocos2d: [0.2499] [INFO] Scene "LoginScene:onEnter()"
+Cocos2d: [1.5204] [INFO] quest state onResponse() 5
+Cocos2d: [1.5205] [INFO] REQUEST getErrorCode() = 7, getErrorMessage() = Couldn't connect to server
+Cocos2d: [1.5205] [INFO] Scene "LoginScene:onExit()"
+Cocos2d: [1.5205] [INFO] ----------------------------------------
+Cocos2d: [1.5205] [INFO] LUA VM MEMORY USED: 1623.06 KB
+Cocos2d: cocos2d: "cc_fps_images" rc=4 id=2 256 x 32 @ 16 bpp => 16 KB
+Cocos2d: cocos2d: "/Users/ivan/github/snatch-game/res/StandStill_default.png" rc=116 id=3 1922 x 1922 @ 32 bpp => 14430 KB
+Cocos2d: cocos2d: "cc_2x2_white_image" rc=2 id=4 2 x 2 @ 32 bpp => 0 KB
+Cocos2d: cocos2d: CCTextureCache dumpDebugInfo: 3 textures, for 14446 KB (14.11 MB)
+Cocos2d: [1.5206] [INFO] ----------------------------------------
+Cocos2d: [1.5218] [INFO] Scene "ChooseLevelScene:onEnter()"
+Cocos2d: [10.2655] [INFO] LUA VM MEMORY USED: 1629.58 KB
+Cocos2d: [20.2666] [INFO] LUA VM MEMORY USED: 1629.68 KB
+Cocos2d: [30.2673] [INFO] LUA VM MEMORY USED: 1629.77 KB
+Cocos2d: [40.2679] [INFO] LUA VM MEMORY USED: 1629.87 KB

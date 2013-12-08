@@ -7,9 +7,19 @@ local LoginForm = class("LoginForm", function()
 end)
 
 local httpClient = import("..HttpClient")
+local alert = import(".AlertView")
 
 LOGIN_FORM_TAG = 2
 LOGIN_FORM_ZORDER = 1
+
+LoginForm.RADIO_BUTTON_IMAGES = {
+    off = "#radio_off.png",
+    off_pressed = "#radio_off.png", 
+    off_disabled = "#radio_off.png",
+    on = "#radio_on.png",
+    on_pressed = "#radio_on.png",
+    on_disabled = "#radio_on.png",
+}
 
 function LoginForm:ctor()
 	cc.GameObject.extend(self):addComponent("components.behavior.EventProtocol"):exportMethods()	
@@ -17,7 +27,25 @@ function LoginForm:ctor()
 	local bg = display.newSprite("#loginbg.png", display.cx, display.cy - 50):addTo(self)
 	local bgWidth = bg:getContentSize().width
 	local bgHeight = bg:getContentSize().height
+	self.male = 1 -- set default male
 	--add radio
+	local sexGroup = cc.ui.UICheckBoxButtonGroup.new(display.LEFT_TO_RIGHT)
+	:addButton(cc.ui.UICheckBoxButton.new(LoginForm.RADIO_BUTTON_IMAGES)
+			:setButtonLabel(cc.ui.UILabel.new({text = "男", color = display.COLOR_WHITE}))
+            :setButtonLabelOffset(20, 0)
+            :setButtonSelected(true)
+            :align(display.LEFT_CENTER))
+	:addButton(cc.ui.UICheckBoxButton.new(LoginForm.RADIO_BUTTON_IMAGES)
+			:setButtonLabel(cc.ui.UILabel.new({text = "女", color = display.COLOR_WHITE}))
+            :setButtonLabelOffset(20, 0)
+            :align(display.LEFT_CENTER))
+	:setButtonsLayoutMargin(10, 10, 10, 10)
+	:onButtonSelectChanged(function(event)
+            printf("Option %d selected, Option %d unselected", event.selected, event.last)
+            if event.selected ~= 1 then self.male = 0 else self.male = 1 end 
+        end)
+    :align(display.CENTER_LEFT, display.cx - bgWidth/2 + 150, display.cy + 20)
+    :addTo(self)
 
 	--add editbox 
 	self.loginName = ui.newEditBox({
@@ -39,14 +67,13 @@ function LoginForm:ctor()
 		})
 	:align(display.CENTER_LEFT, display.cx - bgWidth/2 + 150, display.cy)
 	:addTo(self)
-	self.loginName:setFontSize(100)
 	self.loginName:setFontColor(display.COLOR_BLACK)
-	
-	self.loginName:setPlaceHolder("请输入用户名")
-	self.loginName:setPlaceholderFontSize(10)
+	-- self.loginName:setPlaceHolder("请输入用户名")
 	self.loginName:setPlaceholderFontColor(ccc3(128, 128, 128))
 	self.loginName:setInputMode(kEditBoxInputModeSingleLine)
 
+	printf("loginName getZOrder() %d", self.loginName:getZOrder())
+	
 	--add random button
 	cc.ui.UIPushButton.new({
 			normal = "#randombtn.png",
@@ -59,7 +86,14 @@ function LoginForm:ctor()
 			
 			httpClient.new(function (data)
 				self.loginName:setText(data)
-			 end, SLS_SERVER_HOST .. "/player/randomName"):start()
+			 end, SLS_SERVER_HOST .. "/player/randomName")
+			:onRequestFailed(function(requestEvent)
+					self.loginName:hide()
+					alert.new("连接失败",nil,function(closeEvent)
+							self.loginName:show()
+					  end ):addTo(self)
+				end)
+			:start()
 
 		end)
 	 :align(display.CENTER_RIGHT, display.cx + bgWidth/2 - 150, display.cy)
@@ -81,15 +115,17 @@ function LoginForm:ctor()
 					end,SLS_SERVER_HOST.."/player/register",{
 						playerId = device.getOpenUDID(),
 						playerName = loginName,
-						male = 1
+						male = self.male
 					}):start()
 
 			end	
 
-		end)
-		:align(display.TOP_CENTER, display.cx, display.cy - 70)
-		:addTo(self)
-
+			app:enterChooseLevel()
+	end)
+	:align(display.TOP_CENTER, display.cx, display.cy - 70)
+	:addTo(self)
+	printf("loginForm vertex %d", self:getVertexZ())
+ 	self:setZOrder(LOGIN_FORM_ZORDER)
 end
 
 
