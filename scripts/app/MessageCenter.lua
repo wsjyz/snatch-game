@@ -47,6 +47,16 @@ function MessageCenter:onData(__event)
 	echoInfo("socket status: %s, partial:%s", __event.name, ByteArray.toString(__event.data))
 end
 
+function MessageCenter:getSendDataByLpack(serviceName, dataObj)
+	local jsonStr = json.encode(dataObj)
+	return string.pack(">iA", 30 + string.len(jsonStr), self:getServiceFullName(serviceName)..jsonStr)
+end
+
+function MessageCenter:getServiceFullName(serviceName)
+  local length = string.len(serviceName)
+  if length > 30 then return string.sub(serviceName, 0, 30) end
+  return serviceName .. string.rep(" ", 30-length)
+end
 
 --serviceCode  values must be one of MessageCenter.ENTER_ROOM_SERVICE,MessageCenter.LEFT_ROOM_SERVICE etc.
 --data to be send to server
@@ -54,24 +64,28 @@ function MessageCenter:sendMessage(serviceCode,data)
 	assert(type(serviceCode) == "number","Invalid type, must be number")
 	assert(type(data) == "table","Invalid type,must be table")
 
-	local serviceName = self:getServiceName_(serviceCode)
-	echoInfo("serviceName length = %d" , string.len(serviceName))
-	local dataJson = json.encode(data)
-	echoInfo("dataJson length = %d" , string.len(dataJson))
-	local messageLength = string.format("%04d", 4 + 30 + string.len(dataJson))
+	-- local serviceName = self:getServiceName_(serviceCode)
+	-- echoInfo("serviceName length = %d" , string.len(serviceName))
+	-- local dataJson = json.encode(data)
+	-- echoInfo("dataJson length = %d" , string.len(dataJson))
+	-- local messageLength = string.format("%04d", 4 + 30 + string.len(dataJson))
 
-	echoInfo("\n messageLength : %s \n ServiceName : %s \n Data : %s ", messageLength,serviceName,dataJson)
+	-- echoInfo("\n messageLength : %s \n ServiceName : %s \n Data : %s ", messageLength,serviceName,dataJson)
 
-	local _ba = ByteArray.new()
-	_ba:writeInt(messageLength)
-	print("ba.toString(16):", _ba:toString(16))
-	_ba:writeStringBytes(serviceName)
-	print("ba.toString(16):", _ba:toString(16))
-	_ba:writeStringBytes(dataJson)
-	print("ba.toString(16):", _ba:toString(16))
+	-- local _ba = ByteArray.new()
+	-- _ba:writeInt(messageLength)
+	-- print("ba.toString(16):", _ba:toString(16))
+	-- _ba:writeStringBytes(serviceName)
+	-- print("ba.toString(16):", _ba:toString(16))
+	-- _ba:writeStringBytes(dataJson)
+	-- print("ba.toString(16):", _ba:toString(16))
 
-	MessageCenter.super:send(_ba:getPack())
-	echoInfo("pack length : %d" , string.len(_ba:getPack()))
+	-- MessageCenter.super:send(_ba:getPack())
+	-- echoInfo("pack length : %d" , string.len(_ba:getPack()))
+
+	local __pack = self:getSendDataByLpack(MessageCenter.SERVICES[serviceCode], data)
+	MessageCenter.super:send(__pack)
+	print("__pack: ", string.len(__pack))
 end
 
 function MessageCenter:getServiceName_(serviceCode)
