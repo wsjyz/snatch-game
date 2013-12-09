@@ -11,7 +11,11 @@ local MessageCenter = class("MessageCenter", socket)
 local ByteArray  = import(".utils.ByteArray")
 
 --定义Model需要监听此处定义的事件，然后再分发
-MessageCenter.ON_PLAYER_READY = "ON_PLAYER_READY"
+--e.g addEventListener("ON_ENTER_ROOM_EVENT",handler)
+MessageCenter.EVENTS = {
+	ON_ENTER_ROOM_EVENT = "onEnterRoom"
+}
+
 
 --定义服务端的接口
 MessageCenter.ENTER_ROOM_SERVICE = 1
@@ -41,16 +45,31 @@ end
 
 function MessageCenter:onStatus(__event)
 	echoInfo("socket status: %s", __event.name)
+	echoInfo("isConnected: %s" , MessageCenter.super.isConnected)
 end
 
 function MessageCenter:onData(__event)
 	echoInfo("socket status: %s, partial:%s", __event.name, ByteArray.toString(__event.data))
+	local __ba = ByteArray.new(ByteArray.ENDIAN_BIG)
+	__ba:writeBuf(__event.data)
+	__ba:setPos(1)
+	local headLength = __ba:readInt()
+	local eventName = string.trim(__ba:readStringBytes(30)) 
+	local params = json.decode(__ba:readStringBytes(headLength - 30))
+
+	local _event = table.keyOfItem(MessageCenter.EVENTS, eventName)
+	if _event then 
+		self:dispatchEvent({name = _event, data = params})
+	else
+		echoInfo("Can not find event for name %s" , eventName)
+	end
 end
 
+function MessageCenter:sendMessage
 
 --serviceCode  values must be one of MessageCenter.ENTER_ROOM_SERVICE,MessageCenter.LEFT_ROOM_SERVICE etc.
 --data to be send to server
-function MessageCenter:sendMessage(serviceCode,data)
+function MessageCenter:sendMessage_(serviceCode,data)
 	assert(type(serviceCode) == "number","Invalid type, must be number")
 	assert(type(data) == "table","Invalid type,must be table")
 
@@ -58,17 +77,14 @@ function MessageCenter:sendMessage(serviceCode,data)
 	echoInfo("serviceName length = %d" , string.len(serviceName))
 	local dataJson = json.encode(data)
 	echoInfo("dataJson length = %d" , string.len(dataJson))
-	local messageLength = string.format("%04d", 4 + 30 + string.len(dataJson))
+	local messageLength = string.format("%04d", 30 + string.len(dataJson))
 
 	echoInfo("\n messageLength : %s \n ServiceName : %s \n Data : %s ", messageLength,serviceName,dataJson)
 
-	local _ba = ByteArray.new()
+	local _ba = ByteArray.new(ByteArray.ENDIAN_BIG)
 	_ba:writeInt(messageLength)
-	print("ba.toString(16):", _ba:toString(16))
 	_ba:writeStringBytes(serviceName)
-	print("ba.toString(16):", _ba:toString(16))
 	_ba:writeStringBytes(dataJson)
-	print("ba.toString(16):", _ba:toString(16))
 
 	MessageCenter.super:send(_ba:getPack())
 	echoInfo("pack length : %d" , string.len(_ba:getPack()))

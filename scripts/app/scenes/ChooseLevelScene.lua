@@ -1,10 +1,10 @@
+
 local CommonBackground = import("..views.CommonBackground")
 local MessageCenter = import("..MessageCenter").new("127.0.0.1",9110)
 local SettingMenu = import("..views.SettingMenu")
 local ChooseLevelScene = class("ChooseLevelScene",function ()
 	return display.newScene("ChooseLevelScene")
 end)
-
 
 
 function ChooseLevelScene:ctor()
@@ -76,5 +76,7 @@ function ChooseLevelScene:ctor()
 	SettingMenu.new(100,display.cy):addTo(self)
 
 end
+
+
 
 return ChooseLevelScene
