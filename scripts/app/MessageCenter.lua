@@ -16,7 +16,6 @@ MessageCenter.EVENTS = {
 	ON_ENTER_ROOM_EVENT = "onEnterRoom"
 }
 
-
 --定义服务端的接口
 MessageCenter.ENTER_ROOM_SERVICE = 1
 MessageCenter.LEFT_ROOM_SERVICE = 2
@@ -65,18 +64,15 @@ function MessageCenter:onData(__event)
 	end
 end
 
-function MessageCenter:sendMessage
 
 --serviceCode  values must be one of MessageCenter.ENTER_ROOM_SERVICE,MessageCenter.LEFT_ROOM_SERVICE etc.
 --data to be send to server
-function MessageCenter:sendMessage_(serviceCode,data)
+function MessageCenter:sendMessage(serviceCode,data)
 	assert(type(serviceCode) == "number","Invalid type, must be number")
 	assert(type(data) == "table","Invalid type,must be table")
 
 	local serviceName = self:getServiceName_(serviceCode)
-	echoInfo("serviceName length = %d" , string.len(serviceName))
 	local dataJson = json.encode(data)
-	echoInfo("dataJson length = %d" , string.len(dataJson))
 	local messageLength = string.format("%04d", 30 + string.len(dataJson))
 
 	echoInfo("\n messageLength : %s \n ServiceName : %s \n Data : %s ", messageLength,serviceName,dataJson)
@@ -87,7 +83,7 @@ function MessageCenter:sendMessage_(serviceCode,data)
 	_ba:writeStringBytes(dataJson)
 
 	MessageCenter.super:send(_ba:getPack())
-	echoInfo("pack length : %d" , string.len(_ba:getPack()))
+
 end
 
 function MessageCenter:getServiceName_(serviceCode)
