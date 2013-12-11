@@ -119,12 +119,11 @@ function LoginForm:ctor()
 					}):start()
 
 			end	
-
 			app:enterChooseLevel()
 	end)
 	:align(display.TOP_CENTER, display.cx, display.cy - 70)
 	:addTo(self)
-	printf("loginForm vertex %d", self:getVertexZ())
+	
  	self:setZOrder(LOGIN_FORM_ZORDER)
 end
 
