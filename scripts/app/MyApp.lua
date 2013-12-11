@@ -17,8 +17,18 @@ function MyApp:run()
     self:enterScene("LoginScene")
 end
 
-function MyApp:enterChooseLevel( )
+function MyApp:enterChooseLevel()
 	self:enterScene("ChooseLevelScene")
 end
+
+function MyApp:enterPlayerWaiting()
+	self:enterScene("PlayerWaitingScene")
+end
+
+function MyApp:enterGameScene()
+	self:enterScene("GameScene")
+end
+
+
 
 return MyApp

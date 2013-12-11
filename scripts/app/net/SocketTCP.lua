@@ -76,7 +76,7 @@ function SocketTCP:connect(__host, __port, __retryConnectWhenFailure)
 		-- local __succ, __status = self.tcp:send(1)
 		-- thus, I shall use "*l" to receive data
 		local __body, __status, __partial = self.tcp:receive("*l")
-		--print("receive:", __body, __status, string.len(__partial))
+		-- print("receive:", __body, __status, string.len(__partial))
 		if __status == STATUS_TIMEOUT then
 			self:_onConnected()
 		end
