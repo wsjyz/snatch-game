@@ -79,6 +79,7 @@ end
 
 function SettingMenu:userInfo_(event)
 	print("userInfo_()")
+	app:enterProfileCenter()
 end
 
 function SettingMenu:volumeControl_(event)

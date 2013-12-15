@@ -29,6 +29,8 @@ function MyApp:enterGameScene()
 	self:enterScene("GameScene")
 end
 
-
+function MyApp:enterProfileCenter()
+	self:enterScene("ProfileCenterScene")
+end
 
 return MyApp
