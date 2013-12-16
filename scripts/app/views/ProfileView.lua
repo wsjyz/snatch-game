@@ -19,6 +19,34 @@ function ProfileView:ctor()
 	local avatarImage = ((self.male == 1 and "#male.png") or "#femail.png")
 	local avatar = display.newSprite(avatarImage, display.cx - 100, display.cy + 120):addTo(self)
 
+	local userName = ui.newTTFLabel({text = "奔跑的二哥", size = 24, color = ccc3(255, 255, 0)})
+	:align(display.CENTER_LEFT, display.cx - 50, display.cy + 150) 
+	:addTo(self)
+
+	local level = ui.newTTFLabel({text = "中级", size = 24, color = ccc3(255, 255, 0)})
+	:align(display.CENTER_LEFT, display.cx - 50, display.cy + 110) 
+	:addTo(self)
+
+	local rank = ui.newTTFLabel({text = "当前排名:第3名", size = 24, color = display.COLOR_WHITE})
+	:align(display.CENTER_LEFT, display.cx + 80, display.cy + 150) 
+	:addTo(self)
+
+	--add editbox 
+	local namebox = ui.newEditBox({
+		image = "#inputbox2.png",
+		size = cc.size(330,50),
+        listener = function(event, editbox)
+        end
+		})
+	:align(display.CENTER_LEFT, display.cx - 50, display.cy + 70) 
+	:addTo(self)
+	-- namebox:setFontColor(display.COLOR_BLACK)
+	-- -- self.loginName:setPlaceHolder("请输入用户名")
+	-- namebox:setPlaceholderFontColor(ccc3(128, 128, 128))
+	-- namebox:setInputMode(kEditBoxInputModeSingleLine)
+	-- namebox:setEnabled(false)
+	-- namebox:setMaxLength(0)
+
 	-- --add bg
 	-- local bg = display.newSprite("#loginbg.png", display.cx, display.cy - 50):addTo(self)
 	-- local bgWidth = bg:getContentSize().width
