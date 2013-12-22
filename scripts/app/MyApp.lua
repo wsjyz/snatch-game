@@ -21,8 +21,13 @@ function MyApp:enterChooseLevel()
 	self:enterScene("ChooseLevelScene")
 end
 
-function MyApp:enterPlayerWaiting()
-	self:enterScene("PlayerWaitingScene")
+function MyApp:enterChooseAward(level)
+	local args = {level}
+	self:enterScene("RoomListScene", args)
+end
+
+function MyApp:enterPlayerWaiting(players)
+	self:enterScene("PlayerWaitingScene",players)
 end
 
 function MyApp:enterGameScene()

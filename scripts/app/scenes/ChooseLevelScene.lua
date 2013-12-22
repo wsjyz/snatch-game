@@ -15,7 +15,7 @@ function ChooseLevelScene:ctor()
 	local scale_rate = 1.1
 
 	cc.EventProxy.new(sockettcp , self)
-	:addEventListener("ON_ENTER_ROOM_EVENT",self.onEnterRoom,self)
+	:addEventListener("ON_ENTER_ROOM",self.onEnterRoom,self)
 
 
 	CommonBackground.new():addTo(self)
@@ -26,13 +26,7 @@ function ChooseLevelScene:ctor()
     		disabled = "#xiangshi.png"
 		})
 		:onButtonClicked(function(e) 
-			sockettcp:sendMessage(ENTER_ROOM_SERVICE, {
-					userId = "ivan2",
-					nickName = "Ivan",
-					awardId = "ROOM110",
-					male = 1
-				})
-
+				app:enterChooseAward(1)
 			end)
 		:onButtonPressed(function (e) 
 			 e.target:setScale(scale_rate)
@@ -50,7 +44,7 @@ function ChooseLevelScene:ctor()
     		disabled = "#huishi_lock.png"
 		})
 		:onButtonClicked(function(e) 
-			print("enterNextScene")
+			app:enterChooseAward(2)
 			end)
 		:onButtonPressed(function (e) 
 			 e.target:setScale(scale_rate)
@@ -68,7 +62,7 @@ function ChooseLevelScene:ctor()
     		disabled = "#dianshi_lock.png"
 		})
 		:onButtonClicked(function(e) 
-			print("enterNextScene")
+			app:enterChooseAward(3)
 			end)
 		:onButtonPressed(function (e) 
 			 e.target:setScale(scale_rate)
@@ -80,13 +74,8 @@ function ChooseLevelScene:ctor()
 		:align(display.CENTER, display.cx + LEVEL_OFFSET_X , display.cy - LEVEL_OFFSET_Y)
 		:addTo(self)
 	--SettingMenu	
-	SettingMenu.new(100,display.cy):addTo(self)
+	SettingMenu.new():addTo(self)
 
-end
-
-function ChooseLevelScene:onEnterRoom(event)
-	echoInfo("ChooseLevelScene event receive: %s\n , data : %s", event.name , event.data)
-	app:enterPlayerWaiting()
 end
 
 return ChooseLevelScene

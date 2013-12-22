@@ -2,41 +2,16 @@
 -- Author: ivan.vigoss@gmail.com
 -- Date: 2013-12-08 11:59:00
 --
-local ModalLayer = import("..ModalLayer")
-local AlertView = class("AlertView", ModalLayer)
+local CommonModalView = import(".CommonModalView")
+local AlertView = class("AlertView", function() 
+	return display.newNode()
+end)
 
 --content : string or TTFLabel
 --title : string or TTFLabel
 function AlertView:ctor(content,title,onCloseListener)
-	self.super:ctor()
-	local bg = display.newSprite("#floatbg_large.png",display.cx,display.cy,size)
-	:align(display.CENTER, display.cx, display.cy)
-	:addTo(self)
-	bg:setTouchPriority(1)
-	
-	bg:setTouchEnabled(true)
-	--avoid lower layer response
-	bg:addTouchEventListener(function(event,x,y,preX,preY) return true end)
-
-	local bgXOffSet = bg:getContentSize().width/2
-	local bgYOffSet = bg:getContentSize().height/2
-
-	local clsX = display.cx + bgXOffSet
-	local clsY = display.cy + bgYOffSet
-
-	--close button
-	local cls = cc.ui.UIPushButton.new({
-			normal = "#close.png",
-    		pressed = "#close_active.png",
-    		disabled = "#close_active.png"
-		})
-		:onButtonClicked(function(e) 
-			self:removeFromParent()
-			if onCloseListener then onCloseListener(e) end
-		end)
-		:align(display.CENTER, clsX - 10, clsY - 10)
-		:addTo(self)
-
+	local modalLayer = CommonModalView.new()
+	local bgYOffSet = modalLayer:getOffsetPoint().y
 	--get type function
 	local function getTargetType(target)
 		local t = type(target)
@@ -46,7 +21,7 @@ function AlertView:ctor(content,title,onCloseListener)
 
 	--title
 	local titleType = getTargetType(title)
-	printf("title type is %s", titleType)
+	
 	local titleLabel
 	if titleType == "string" or titleType == "nil" then
 		titleLabel = ui.newTTFLabel({
@@ -64,8 +39,7 @@ function AlertView:ctor(content,title,onCloseListener)
 		})
 	end
 	if titleLabel then
-		titleLabel:align(display.TOP_CENTER, display.cx, clsY - 18)
-				:addTo(self)
+		modalLayer:addContentChild(titleLabel, display.cx, display.cy + bgYOffSet - 18,display.TOP_CENTER)
 	end
 
 	--content
@@ -85,10 +59,16 @@ function AlertView:ctor(content,title,onCloseListener)
 		})
 	end
 	if contentLabel then
-		contentLabel:align(display.CENTER, display.cx, display.cy)
-		:addTo(self)
+		modalLayer:addContentChild(contentLabel)
 	end
 
+	if onCloseListener then 
+		modalLayer:addEventListener("onClose", function() 
+			onCloseListener()
+		end)
+	end
+
+	self:addChild(modalLayer:getView())
 end
 
 return AlertView

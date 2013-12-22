@@ -36,7 +36,6 @@ function HttpClient:onResponse(event)
         if request:getResponseStatusCode() ~= 200 then
         else
             echoInfo("REQUEST   getResponseDataLength() = %d", request:getResponseDataLength())
-            echoInfo("REQUEST  getResponseString() =\n%s", request:getResponseString())
             echoInfo("REQUEST  getResponseData() =\n%s",  request:getResponseData())
             local result = json.decode(request:getResponseString())
             

@@ -17,7 +17,7 @@ function SettingMenu:ctor(x,y)
 	self.item_visible = false
 
 	local itemPadding = 90
-	self.x = x or display.cx
+	self.x = x or 100
 	self.y = y or display.cy
 	local menuBar = display.newSprite("#menubar.png",self.x,self.y)
 	self:addChild(menuBar)

@@ -72,8 +72,6 @@ function LoginForm:ctor()
 	self.loginName:setPlaceholderFontColor(ccc3(128, 128, 128))
 	self.loginName:setInputMode(kEditBoxInputModeSingleLine)
 
-	printf("loginName getZOrder() %d", self.loginName:getZOrder())
-	
 	--add random button
 	cc.ui.UIPushButton.new({
 			normal = "#randombtn.png",

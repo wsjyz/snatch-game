@@ -14,7 +14,13 @@ local scheduler = require(cc.PACKAGE_NAME .. ".scheduler")
 --定义Model需要监听此处定义的事件，然后再分发
 --e.g addEventListener("ON_ENTER_ROOM_EVENT",handler)
 MessageCenter.EVENTS = {
-	ON_ENTER_ROOM_EVENT = "onEnterRoom"
+	ON_ENTER_ROOM = "onEnterRoom",
+	ON_OTHER_USER_COME_IN = "onOtherUserComeIn",
+	ON_OTHER_USER_LEFT = "onOtherUserLeft",
+	ON_PLAYER_READY = "onPlayerReady",
+	ON_GAME_START = "onGameStart",
+	ON_ANSWER_COMPLETE = "onAnswerComplete",
+	ON_GAME_OVER = "onGameOver"
 }
 
 --定义服务端的接口
@@ -26,9 +32,9 @@ ANSWER_SERVICE = 4
 --具体的服务接口，保持与上面定义的SERVICE的顺序一致
 MessageCenter.SERVICES = {
 	"playerService.enterRoom", --ENTER_ROOM_SERVICE 
-	"",	--LEFT_ROOM_SERVICE
-	"", --ON_READY_SERVICE
-	""  --ANSWER_SERVICE
+	"playerService.leftRoom",	--LEFT_ROOM_SERVICE
+	"playerService.playerReady", --ON_READY_SERVICE
+	"playerService.answerQuestion"  --ANSWER_SERVICE
 }
 
 
