@@ -6,11 +6,13 @@ local AwardView = class("AwardView", function()
 	return display.newLayer()
 end)
 
-AwardView.AwardList = {
-	{ bgHref = "http://f.hiphotos.baidu.com/image/w%3D2048/sign=fb49aca5087b02080cc938e156e1f3d3/bf096b63f6246b60997c3674e9f81a4c510fa244.jpg", description = "这个是第一个奖品" },
-	{ bgHref = "http://a.hiphotos.baidu.com/image/w%3D2048/sign=a8b98a1dd62a283443a6310b6f8dc8ea/adaf2edda3cc7cd945f0aed93b01213fb90e91d5.jpg", description = "这个是第二个奖品" },
-	{ bgHref = "http://b.hiphotos.baidu.com/image/w%3D2048/sign=348d33c8902397ddd6799f046dbab3b7/9c16fdfaaf51f3dee53ab34b95eef01f3a297910.jpg", description = "这个是最后一个奖品" }
-}
+function AwardView:getAwardList()
+	return {
+				{awardName = "熏肉大饼", detailHref = "http://www.baidu.com"},
+				{awardName = "手抓饼", detailHref = "http://www.sina.com.cn"},
+				{awardName = "老婆饼", detailHref = "http://www.163.com"}
+			}
+end
 
 function AwardView:ctor(awardList)
 	cc.GameObject.extend(self):addComponent("components.behavior.EventProtocol"):exportMethods()
@@ -18,8 +20,9 @@ function AwardView:ctor(awardList)
 	local bgWidth = self:getContentSize().width
 	local bgHeight = self:getContentSize().height
 
-	-- temp set locla vars
-	awardList = AwardView.AwardList
+	if awardList == nil then
+		awardList = self:getAwardList()
+	end
 
 	local startX = display.cx - 150
 	local startY = display.cy + 200
@@ -29,15 +32,14 @@ function AwardView:ctor(awardList)
 	--rank bg
 	display.newSprite("#rank_".. i ..".png", startX, startY - i * 100):addTo(self)
 
-	-- add label
-	ui.newTTFLabel({text = "恭喜您获得", size = 24, color = display.COLOR_WHITE})
+	-- add award title and name
+	ui.newTTFLabel({text = "恭喜您获得", size = 22, color = display.COLOR_WHITE})
 	:align(display.CENTER_LEFT, startX + 30, startY - i * 100) 
 	:addTo(self)
 
-	-- add award image TODO:
-	-- ui.newTTFLabel({text = "恭喜您获得", size = 24, color = display.COLOR_WHITE})
-	-- :align(display.CENTER_LEFT, startX + 50, startY - i * 100) 
-	-- :addTo(self)
+	ui.newTTFLabel({text = award.awardName, size = 24, color = ccc3(255, 255, 0), dimensions = CCSize(120, 30)})
+	:align(display.CENTER_LEFT, startX + 150, startY - i * 100) 
+	:addTo(self)
 
 	-- add detail btn
 	local cls = cc.ui.UIPushButton.new({
@@ -46,9 +48,9 @@ function AwardView:ctor(awardList)
     		disabled = "#detailbtn.png"
 		})
 		:onButtonClicked(function(e)
-			
+			-- TODO： show url with detailHref
 		end)
-		:align(display.CENTER, startX + 300, startY - i * 100)
+		:align(display.CENTER, startX + 320, startY - i * 100)
 		:addTo(self)
 
 	end	

@@ -6,12 +6,13 @@ local WinRankScene = class("WinRankScene", function()
     return display.newScene("WinRankScene")
 end)
 
-WinRankScene.RankList = {
-	{ nickName = "张三", rmb = 500},
-	{ nickName = "赵四", rmb = 300},	
-	{ nickName = "王五", rmb = 100}
-}
-
+function WinRankScene:getRankList()
+    return {
+        { nickName = "张三", rmb = 550},
+        { nickName = "赵四", rmb = 500},  
+        { nickName = "王五", rmb = 220}
+    }
+end
 function WinRankScene:ctor(rankList)
 
 	self.bg = display.newSprite("#bg.png", display.cx, display.cy)
@@ -22,6 +23,10 @@ function WinRankScene:ctor(rankList)
 
     local bgWidth = self.bgInner:getContentSize().width
     local bgHeight = self.bgInner:getContentSize().height
+
+    if rankList == nil then
+        rankList = self:getRankList()
+    end
 
     --add close button
     cc.ui.UIPushButton.new({
@@ -36,10 +41,6 @@ function WinRankScene:ctor(rankList)
      :addTo(self)
 
     -- add rank detail
-
-    -- temp set rank list
-    rankList = WinRankScene.RankList 
-
     local startX = display.cx - 130
 	local startY = display.cy + 150
 
