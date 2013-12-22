@@ -51,7 +51,7 @@ function RoomListScene:ctor(level)
 	:align(display.CENTER, display.cx, display.cy + 200)
 	:addTo(self)
 
-	sockettcp:addEventListener("ON_ENTER_ROOM_EVENT", handler(self, self.onEnterRoom))
+	sockettcp:addEventListener("ON_ENTER_ROOM", handler(self, self.onEnterRoom))
 
 end
 
@@ -83,7 +83,7 @@ function RoomListScene:onTapRoomIcon(event)
 		})
 	:onButtonClicked(function(e) 
 		device.openURL("http://www.baidu.com")
-		end)
+	end)
 	modalLayer:addContentChild(detail, display.cx + 5, display.cy - 120, display.CENTER_LEFT)
 
 	self:addChild(modalLayer:getView())
@@ -106,7 +106,7 @@ function RoomListScene:quickStart()
 	local playerWaitingScene = PlayerWaitingScene.new({
 		{
 			userId = "ivan2",
-			playerName = "Ivan",
+			playerName = "Ivan1",
 			awardId = "ROOM110",
 			seatNo = 0,
 			male = 1
@@ -117,6 +117,34 @@ function RoomListScene:quickStart()
 			awardId = "ROOM110",
 			seatNo = 1,
 			male = 0
+		},
+		{
+			userId = "ivan4",
+			playerName = "Ivan4",
+			awardId = "ROOM110",
+			seatNo = 2,
+			male = 0
+		},
+		{
+			userId = "ivan5",
+			playerName = "Ivan5",
+			awardId = "ROOM110",
+			seatNo = 3,
+			male = 0
+		},
+		{
+			userId = "ivan6",
+			playerName = "Ivan6",
+			awardId = "ROOM110",
+			seatNo = 4,
+			male = 1
+		},
+		{
+			userId = "ivan7",
+			playerName = "Ivan7",
+			awardId = "ROOM110",
+			seatNo = 5,
+			male = 1
 		}
 	})
 

@@ -46,7 +46,6 @@ function CommonModalView:addContentChild(node,x,y,align)
 	local x = x or 0
 	local y = y or 0
 	local align_ = align or display.CENTER
-	printf("Child Postion x : %d , y : %d", x , y )
 	node:align(align_, x, y):addTo(self.view)
 end
 

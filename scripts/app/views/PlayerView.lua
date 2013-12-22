@@ -21,8 +21,8 @@ function PlayerView:ctor(player)
 
 end
 
-function PlayerView:imgPos(align, x, y,withHolder)
-	self.thumbnail:align(align, x, y)
+function PlayerView:imgPos(x, y,withHolder)
+	self.thumbnail:align(display.CENTER_BOTTOM, x, y)
 	if withHolder then
 		display.newSprite("#pad.png"):align(display.CENTER, x, y + 20):addTo(self)
 	end
