@@ -37,8 +37,8 @@ function PlayerWaitingScene:ctor(players)
 	self.timerPlaceHolder = display.newSprite("#countdown_ring.png",display.cx,display.cy):hide():addTo(self)
 	-- animation
 	self.initCountdown = display.newSprite(string.format("#timer_%d.png", 5), display.cx, display.cy):hide():addTo(self)
-	local countdown = display.newSpriteFrame("#timer_%d.png",1,5,true)
-	self.countdownAnimation = display.newAnimation(countdown, 1 / 5)
+	local countdownFrames = display.newFrames("timer_%0d.png",1,5,true)
+	self.countdownAnimation = display.newAnimation(countdownFrames, 1 / 5)
 	--seats
 	self.seats = {}
 
@@ -51,25 +51,17 @@ function PlayerWaitingScene:ctor(players)
 	-- printf("players size %d , detail %s", #players , json.encode(players))
 	--init player
 	for index, player in ipairs(players) do
+		self.roomId = player.roomId
+		
 		local seatNo = ( player.seatNo or 0 ) +1
-		local thumbnail = (player.male == 1 and "#male.png") or "#female.png"
-		local playerName = player.playerName
-		-- thumbnail
 		local x,y = seatPositons[seatNo].x,seatPositons[seatNo].y
-		local seat = display.newSprite(thumbnail)
-		:align(display.CENTER_BOTTOM, x, y - 20)
+		
+		local seat = app:createView("PlayerView", player)
+		:imgPos(display.CENTER_BOTTOM, x, y - 20)
+		:labelPos(playerNameSetting[seatNo].align, playerNameSetting[seatNo].pos)
 		:addTo(self)
 
-		seat.data = player
-		self.seats[#self.seats + 1] = seat
-
-		--user name
-		ui.newTTFLabel({
-			text = playerName,
-			color = display.COLOR_BLACK
-			})
-		:align(playerNameSetting[seatNo].align, playerNameSetting[seatNo].pos.x, playerNameSetting[seatNo].pos.y)
-		:addTo(self)
+		self.seats["seat_" .. seatNo] = seat
 
 		self:checkGameStart()
 	end
@@ -90,6 +82,7 @@ end
 
 function PlayerWaitingScene:onOtherPlayerLeft(player)
 	printf("onOtherPlayerLeft called")
+
 end
 
 function PlayerWaitingScene:checkGameStart()
@@ -97,18 +90,13 @@ function PlayerWaitingScene:checkGameStart()
 		--player animation for start
 		self.initCountdown:playAnimationOnce(self.countdownAnimation, false, function() 
 			HttpClient.new(function(topicList) 
-				printf("load topicList ,as follows : %s", json.json.encode(topicList))
+				printf("load topicList ,as follows : %s", json.encode(topicList))
 				--todo save topicList on local
-				app:enterGameScene()
+				app:enterGameScene(self.players)
 			end ,SLS_SERVER_HOST .. "/topic/random/" .. app.currentRoomLevel)
 		end)
 	end
 		
-end
-
-
-function PlayerWaitingScene:onEnter()
-
 end
 
 return PlayerWaitingScene
