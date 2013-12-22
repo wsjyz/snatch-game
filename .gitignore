@@ -21,3 +21,13 @@
 debug.log
 
 *.log
+
+*.xcworkspacedata
+
+*.xccheckout
+
+*.xcuserstate
+
+*.xcscheme
+
+proj.ios/standstill.xcodeproj/xcuserdata/Tanty.xcuserdatad/xcschemes/xcschememanagement.plist

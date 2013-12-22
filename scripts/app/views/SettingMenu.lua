@@ -85,6 +85,7 @@ end
 
 function SettingMenu:volumeControl_(event)
 	print("volumeControl_()")
+	app:enterQuizScene()
 end
 
 

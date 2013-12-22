@@ -42,4 +42,8 @@ function MyApp:enterWinRankScene()
 	self:enterScene("WinRankScene")
 end
 
+function MyApp:enterQuizScene()
+	self:enterScene("QuizScene")
+end
+
 return MyApp
