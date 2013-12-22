@@ -75,6 +75,7 @@ end
 
 function SettingMenu:showRank_(event)
 	print("showRank_()")
+	app:enterWinRankScene()
 end
 
 function SettingMenu:userInfo_(event)

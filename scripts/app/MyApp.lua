@@ -33,4 +33,8 @@ function MyApp:enterProfileCenter()
 	self:enterScene("ProfileCenterScene")
 end
 
+function MyApp:enterWinRankScene()
+	self:enterScene("WinRankScene")
+end
+
 return MyApp

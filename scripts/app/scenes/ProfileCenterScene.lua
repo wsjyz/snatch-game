@@ -3,8 +3,8 @@
 -- Date: 2013-12-14 01:35:56
 --
 
-local ProfileView = import("..views.ProfileView").new()
-local AwardView = import("..views.AwardView").new()
+local ProfileView = import("..views.ProfileView")
+local AwardView = import("..views.AwardView")
 
 local ProfileCenterScene = class("ProfileCenterScene", function()
     return display.newScene("ProfileCenterScene")
@@ -32,7 +32,14 @@ function ProfileCenterScene:ctor()
     self.bgInner = display.newSprite("#floatbg_large.png", display.cx, display.cy)
     self:addChild(self.bgInner)
 
-    self:addChild(ProfileView) 
+    -- init profile and award view
+    self.profileView = ProfileView.new()
+    self:addChild(self.profileView)
+    
+    self.awardView = AwardView.new()
+    self:addChild(self.awardView)
+
+    self.awardView:setVisible(false)
 
     local bgWidth = self.bgInner:getContentSize().width
     local bgHeight = self.bgInner:getContentSize().height
@@ -46,12 +53,12 @@ function ProfileCenterScene:ctor()
     :setButtonsLayoutMargin(10, 10, 10, 10)
     :onButtonSelectChanged(function(event)
             printf("Option %d selected, Option %d unselected", event.selected, event.last)
-            if event.selected == 1 then 
-                -- print(ProfileView.getParent())
-                self:addChild(ProfileView) 
-                -- print(ProfileView.getParent())
+            if event.selected == 1 then
+                self.profileView:setVisible(true)
+                self.awardView:setVisible(false)
             else 
-                
+                self.profileView:setVisible(false)
+                self.awardView:setVisible(true)
             end 
         end)
     :align(display.LEFT_TOP, display.cx - bgWidth/2 + 35, display.cy - 130)
