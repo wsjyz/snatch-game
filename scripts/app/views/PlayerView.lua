@@ -11,13 +11,13 @@ function PlayerView:ctor(player)
 	local thumbnail = (player.male == 1 and "#male.png") or "#female.png"
 	local playerName = player.playerName
 
-	self.thumbnail = display.newSprite(thumbnail):addTo(self)
+	self.thumbnail = display.newSprite(thumbnail):addTo(self,1)
 
 	self.label = ui.newTTFLabel({
 			text = playerName,
-			color = display.COLOR_BLACK
+			color = ccc3(59, 17, 17)
 			})
-	:addTo(self)
+	:addTo(self,1)
 
 end
 
