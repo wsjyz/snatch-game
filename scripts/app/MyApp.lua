@@ -8,6 +8,10 @@ local MyApp = class("MyApp", cc.mvc.AppBase)
 
 function MyApp:ctor()
     MyApp.super.ctor(self)
+    --global properties
+    --these values will be update in special scene
+    self.me = {} --me , update when login
+    self.currentRoomId = nil -- udpate when enter room or quick start
 end
 
 function MyApp:run()
@@ -17,6 +21,7 @@ function MyApp:run()
     self:enterScene("LoginScene")
 end
 
+-- scene transition
 function MyApp:enterChooseLevel()
 	self:enterScene("ChooseLevelScene")
 end
@@ -24,10 +29,6 @@ end
 function MyApp:enterChooseAward(level)
 	local args = {level}
 	self:enterScene("RoomListScene", args)
-end
-
-function MyApp:enterPlayerWaiting(players)
-	self:enterScene("PlayerWaitingScene",players)
 end
 
 function MyApp:enterGameScene()
