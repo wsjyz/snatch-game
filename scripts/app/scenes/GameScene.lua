@@ -5,6 +5,7 @@
 local GameScene = class("GameScene", function()
 	return display.newScene("GameScene")
 end)
+local scheduler = require(cc.PACKAGE_NAME .. ".scheduler")
 
 local imgOffsetX, imgOffsetY = 150,170
 local labelOffsetX, labelOffsetY = 60,50
@@ -13,15 +14,13 @@ function GameScene:ctor(players)
 	printf("GameScene,players as follows : %s", json.encode(players))
 
 	app:createView("CommonBackground", false):addTo(self)
+	self.players = players
 
-	self.host = players[1]
-	self.guest = players[2]
-
-	self.hostAnswerCombo = 0  --擂主连续回答正确数
-	self.guestAnswerCombo = 0 --挑战者连续回答正确数
 	self.nextPlayerIndex = 3 --下一个挑战者的序号
-	self.currentTopicIndex = 1
-	self.isHostTurn = true
+	self.currentTopicIndex = 1 --下一题的序号
+	self.isHostTurn = true 
+	self.answerMarks = {} --答案标记
+	self.score = 0 --本场自己的积分
 	--mock 
 	self.topicList = {
 		{
@@ -91,19 +90,20 @@ function GameScene:ctor(players)
 	}
 	self.titleLabel = nil
 
-	self:updateHostView()
+	self:setHost(players[1])
 	--host countdown
 	self.hostCountdown = app:createView("Countdown", 20)
 	:align(display.LEFT_CENTER, display.left + imgOffsetX + labelOffsetX, display.top - imgOffsetY + 10)
 	:addTo(self)
+	self.hostCountdown:addEventListener("onTimeBurndown", handler(self, self.onTimeBurndown))
 
-	self:updateGuestView()
+	self:setGuest(players[2])
 	--guest countdown
 	self.guestCountdown = app:createView("Countdown", 20)
 	:align(display.RIGHT_CENTER, display.right - imgOffsetX - labelOffsetX, display.top - imgOffsetY + 10 )
 	:hide()
 	:addTo(self)
-
+	self.guestCountdown:addEventListener("onTimeBurndown", handler(self, self.onTimeBurndown))
 
 	local vsContainer = display.newSprite("#vs_container.png", display.cx, display.top - 120):addTo(self)
 	local vs = display.newSprite("#vs1.png", display.cx, display.top - 150):addTo(self,2)
@@ -114,8 +114,8 @@ function GameScene:ctor(players)
 
 	--content
 	self.titleContainer = display.newSprite("#titlebg.png", display.cx, display.cy + 40):addTo(self)
-	printf("self.titleContainer width: %d ,height : %d", self.titleContainer:getContentSize().width,self.titleContainer:getContentSize().height)
-	printf("self.titleContainer position x :%d , y : %d", self.titleContainer:getPositionX(),self.titleContainer:getPositionY())
+	-- printf("self.titleContainer width: %d ,height : %d", self.titleContainer:getContentSize().width,self.titleContainer:getContentSize().height)
+	-- printf("self.titleContainer position x :%d , y : %d", self.titleContainer:getPositionX(),self.titleContainer:getPositionY())
 	self.itemContainers = {}
 
 	local itemOffsetX = 200
@@ -123,10 +123,9 @@ function GameScene:ctor(players)
 		local x = display.cx + math.pow( -1, itemIndex) * itemOffsetX
 		local y = (itemIndex > 2 and  display.cy - 200) or display.cy - 100
 		-- local item =  display.newSprite("#answer.png", x, y):addTo(self)
-		local item = cc.ui.UIPushButton.new({
-			normal = "#answer.png",
-			pressed = "#answer_active.png",
-			disabled = "#answer.png"
+		local item = cc.ui.UICheckBoxButton.new({
+			off = "#answer.png",
+			on = "#answer_active.png"
 		})
 		:onButtonClicked(function(e)
 			--todo answer
@@ -136,7 +135,7 @@ function GameScene:ctor(players)
 		:addTo(self)
 
 		item.itemIndex = itemIndex
-		self.itemContainers[#self.itemContainers + 1] = item
+		self.itemContainers[itemIndex] = item
 	end
 
 	self:showTopic(self.currentTopicIndex)
@@ -147,7 +146,8 @@ function GameScene:ctor(players)
 
 end
 
-function GameScene:updateHostView()
+function GameScene:setHost(host)
+	self.host = host
 	if self.hostView then
 		self.hostView:removeSelf()
 	end
@@ -157,7 +157,8 @@ function GameScene:updateHostView()
 	:addTo(self)
 end
 
-function GameScene:updateGuestView()
+function GameScene:setGuest(guest)
+	self.guest = guest
 	if self.guestView then
 		self.guestView:removeSelf()
 	end
@@ -167,16 +168,29 @@ function GameScene:updateGuestView()
 	:addTo(self)
 end
 
+function GameScene:resetView()
+	--clear
+	self.rightAnswerIndex = -1
+	if self.titleLabel then
+		self.titleLabel:removeFromParent()
+		self.titleLable = nil
+	end
+	--clear
+	if self.answerMarks then
+		for _,answerMark in ipairs(self.answerMarks) do
+			answerMark:removeSelf(true)
+		end
+		self.answerMarks = {}
+	end
+end
+
 function GameScene:showTopic()
 	if self.currentTopicIndex > table.nums(self.topicList) then
 		throw("error", "no more topic")
 	end
 	local topic = self.topicList[self.currentTopicIndex]
-	--clear
-	if self.titleLabel then
-		self.titleLabel:removeFromParent()
-		self.titleLable = nil
-	end
+	
+	self:resetView()
 
 	--setup title label
 	local marginX , marginY = 25,10
@@ -190,44 +204,75 @@ function GameScene:showTopic()
 	:align(display.TOP_LEFT, titleLabelX, titleLabelY)
 	:addTo(self)
 
-	printf("titleLabel position x : %d, y : %d", self.titleLabel:getPositionX(),self.titleLabel:getPositionY())
-	--setup item label
+	--printf("titleLabel position x : %d, y : %d", self.titleLabel:getPositionX(),self.titleLabel:getPositionY())
+	--setup item label and answer mark
 	for index,item in ipairs(topic.options) do
 		local container = self.itemContainers[index]
 		local itemLabel = ui.newTTFLabel({	
 			text = item.content
 		})
 		container.rightAnswer = item.right
-		container:setButtonLabel("normal", itemLabel)
+		container:setButtonLabel("off", itemLabel)
+		container:setButtonEnabled(self:isMyTurn_())
+
+		if item.right == 1 then self.rightAnswerIndex = index end
+
+		local answerMarkImg = (item.right == 1 and "#correct.png") or "#error.png"
+		local markX,markY = container:getPositionX() - 140,container:getPositionY() + 6
+		--printf("answerMark position x : %d, y : %d", markX,markY)
+		local answerMark = display.newSprite(answerMarkImg, markX, markY)
+		:hide()
+		:addTo(self)
+		self.answerMarks[index] = answerMark
+	end
+end
+
+function GameScene:isMyTurn_()
+	return true
+end
+
+function GameScene:setItemEnabled(enabled)
+	if self.itemContainers then
+		printf("set item Enabled %s", enabled)
+		for _,item in ipairs(self.itemContainers) do
+			item:setButtonEnabled(enabled)
+		end
 	end
 end
 
 function GameScene:answer(item)
-	local timeCost = 0
-	if self.isHostTurn == true then
-		self.hostCountdown:stop()
-		timeCost = self.hostCountdown:getTimeCost()
-	else
-		self.guestCountdown:stop()
-		timeCost = self.guestCountdown:getTimeCost()
-	end
 	--check can answer
-	local myturn = true -- todo 
-	if myturn then
+	if self:isMyTurn_() then
+		local timeCost = 0
+		if self.isHostTurn == true then
+			self.hostCountdown:pause()
+			timeCost = self.hostCountdown:getTimeCost()
+		else
+			self.guestCountdown:pause()
+			timeCost = self.guestCountdown:getTimeCost()
+		end
+		--forbiden all items , avoid twice commit
+		self:setItemEnabled(false)	
+		--update ui,mark selected answer and right answer
+		self:markAnswer(item)
+
 		local data = {
-			userId = "nexus 4",
-			topicIndex = self.currentTopicIndex,
-			optionIndex = item.itemIndex,
-			duration = timeCost, 
-			right = item.rightAnswer
+			roomId = app.currentRoomId,
+			optionIndex = item.itemIndex
 		}
 		printf("%s selected answer : %d ,send data : \n %s", self.host.playerName ,item.itemIndex,json.encode(data))
-		--todo send msg
-		sockettcp.sendMessage(ANSWER_SERVICE, data)
+		
+		--add score
+		self.score = self.score + item.rightAnswer
 
-		self:changeTurns()
-		self.currentTopicIndex = self.currentTopicIndex + 1
-		self:showTopic(self.currentTopicIndex)
+		-- sockettcp:sendMessage(ANSWER_SERVICE,data)
+	end
+end
+
+function GameScene:markAnswer(item)
+	self.answerMarks[item.itemIndex]:show()
+	if item.rightAnswer == 0 then
+		self.answerMarks[self.rightAnswerIndex]:show()
 	end
 end
 
@@ -242,17 +287,46 @@ function GameScene:changeTurns()
 	self.isHostTurn = not self.isHostTurn
 end
 
-function GameScene:checkGameCombo()
 
-end
-
-function GameScene:checkGameOver()
-
-end
-
---socket event listener
+--event listener
 function GameScene:onAnswerComplete(data)
+	local selectedItem = self.itemContainers[data.optionIndex]
+	if not self:isMyTurn_() then -- avoid duplicate render
+		self:markAnswer(selectedItem)
+	end
 
+	if selectedItem.rightAnswer == 0 then -- wrong
+		if self.nextPlayerIndex <= table.nums(self.players) then
+			if self.isHostTurn then 
+				self:setHost(self.players[self.nextPlayerIndex]) 
+			else
+				self:setGuest(self.players[self.nextPlayerIndex])
+			end
+			self.nextPlayerIndex = self.nextPlayerIndex + 1
+		else
+			--no more players ,game over
+			local winner = (self.isHostTurn and self.guest) or self.host
+			
+		end
+	end
+		
+	--delay for next topic
+	scheduler.performWithDelayGlobal(function() 
+		self.currentTopicIndex = self.currentTopicIndex + 1
+		self:changeTurns()
+		self:showTopic()
+	end,3)
+end
+
+function GameScene:onTimeBurndown()
+	local item = self.itemContainers[math.random(1,4)]
+	self:answer(item)
+end
+
+function GameScene:onExit()
+	if self.score > 0 then
+		--todo submit my score to server.
+	end
 end
 
 return GameScene
