@@ -74,8 +74,13 @@ function ChooseLevelScene:ctor()
 		:align(display.CENTER, display.cx + LEVEL_OFFSET_X , display.cy - LEVEL_OFFSET_Y)
 		:addTo(self)
 	--SettingMenu	
-	SettingMenu.new():addTo(self)
+	local menu = SettingMenu.new():addTo(self)
+	menu:addEventListener("goBack", handler(self, self.goBack))
 
+end
+
+function ChooseLevelScene:goBack(event)
+	app:enterScene("LoginScene")
 end
 
 return ChooseLevelScene
