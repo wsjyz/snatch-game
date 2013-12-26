@@ -19,8 +19,7 @@ MessageCenter.EVENTS = {
 	ON_OTHER_USER_LEFT = "onOtherUserLeft",
 	ON_PLAYER_READY = "onPlayerReady",
 	ON_GAME_START = "onGameStart",
-	ON_ANSWER_COMPLETE = "onAnswerComplete",
-	ON_GAME_OVER = "onGameOver"
+	ON_ANSWER_COMPLETE = "onAnswerComplete"
 }
 
 --定义服务端的接口
@@ -88,7 +87,6 @@ end
 --serviceCode  values must be one of MessageCenter.ENTER_ROOM_SERVICE,MessageCenter.LEFT_ROOM_SERVICE etc.
 --data to be send to server
 function MessageCenter:sendMessage(serviceCode,data)
-	printf("serviceCode type %s ,value %s", type(serviceCode) , serviceCode)
 	assert(type(serviceCode) == "number","Invalid type, must be number")
 	assert(type(data) == "table","Invalid type,must be table")
 
