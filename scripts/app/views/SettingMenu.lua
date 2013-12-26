@@ -3,7 +3,10 @@
 -- Date: 2013-12-08 17:07:33
 --
 local SettingMenu = class("SettingMenu",function()
-	return display.newNode()
+	local node = display.newNode()
+	node:setNodeEventEnabled(true)
+	require(cc.PACKAGE_NAME .. ".api.EventProtocol").extend(node)
+	return node
 end)
 
 function SettingMenu:ctor(x,y)
@@ -70,21 +73,18 @@ function SettingMenu:ctor(x,y)
 end
 
 function SettingMenu:goBack_(event)
-	print("goBack_()")
+	self:dispatchEvent({name = "goBack"})
 end
 
 function SettingMenu:showRank_(event)
-	print("showRank_()")
 	app:enterWinRankScene()
 end
 
 function SettingMenu:userInfo_(event)
-	print("userInfo_()")
 	app:enterProfileCenter()
 end
 
 function SettingMenu:volumeControl_(event)
-	print("volumeControl_()")
 	app:enterQuizScene()
 end
 
