@@ -23,6 +23,7 @@ function Countdown:start()
 		self.currentNumber = self.currentNumber - self.step
 		if self.currentNumber <= 0 then
 			self:pause()
+			self:dispatchEvent({name = "onTimeBurndown"})
 		end
 		self:updateLabel()
 
