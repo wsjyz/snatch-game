@@ -80,6 +80,7 @@ function ChooseLevelScene:ctor()
 end
 
 function ChooseLevelScene:goBack(event)
+	printf("goBack called")
 	app:enterScene("LoginScene")
 end
 
