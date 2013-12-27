@@ -1,5 +1,6 @@
 
 require("config")
+require("UrlConstants")
 require("framework.init")
 require("framework.shortcodes")
 require("framework.cc.init")
@@ -11,6 +12,7 @@ function MyApp:ctor()
     --global properties
     --these values will be update in special scene
     self.me = {} --me , update when login
+    self.currentLevel = 1 -- room level , default is 1
     self.currentRoomId = nil -- udpate when enter room or quick start
 end
 
@@ -27,6 +29,7 @@ function MyApp:enterChooseLevel()
 end
 
 function MyApp:enterChooseAward(level)
+    self.currentLevel = level
 	local args = {level}
 	self:enterScene("RoomListScene", args)
 end
