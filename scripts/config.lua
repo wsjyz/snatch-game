@@ -16,5 +16,3 @@ CONFIG_SCREEN_AUTOSCALE = "FIXED_WIDTH"
 
 GAME_TEXTURE_DATA_FILENAME  = "StandStill_default.plist"
 GAME_TEXTURE_IMAGE_FILENAME = "StandStill_default.png"
-
-SLS_SERVER_HOST = "http://127.0.0.1:8089/sls"

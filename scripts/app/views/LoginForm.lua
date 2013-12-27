@@ -84,7 +84,7 @@ function LoginForm:ctor()
 			
 			httpClient.new(function (data)
 				self.loginName:setText(data)
-			 end, SLS_SERVER_HOST .. "/player/randomName")
+			 end, getUrl(RANDOM_NAME_URL))
 			:onRequestFailed(function(requestEvent)
 					self.loginName:hide()
 					alert.new("连接失败",nil,function(closeEvent)
@@ -110,7 +110,10 @@ function LoginForm:ctor()
 			local loginName = self.loginName:getText()
 			if loginName and string.trim(loginName) then
 				httpClient.new(function(event)
-					end,SLS_SERVER_HOST.."/player/register",{
+					--todo 
+					end,
+					getUrl(RIGESTER_URL),
+					{
 						playerId = device.getOpenUDID(),
 						playerName = loginName,
 						male = self.male

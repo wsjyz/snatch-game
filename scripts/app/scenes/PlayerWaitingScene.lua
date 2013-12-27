@@ -107,7 +107,7 @@ function PlayerWaitingScene:checkGameStart()
 				printf("load topicList ,as follows : %s", json.encode(topicList))
 				--todo save topicList on local
 				display.replaceScene(GameScene.new(self.players))
-			end ,SLS_SERVER_HOST .. "/topic/random/" .. app.currentRoomLevel):start()
+			end ,getUrl(TOPIC_LIST_URL, app.currentRoomLevel) ):start()
 		end)
 		return true
 	end

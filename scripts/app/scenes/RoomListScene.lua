@@ -16,8 +16,6 @@ local RoomListScene = class("RoomListScene", function ()
 end)
 
 function RoomListScene:ctor(level)
-	app.currentRoomLevel = level
-
 	self:addChild(bgLayer)
 	self:addChild(SettingMenu.new())
 
@@ -33,7 +31,7 @@ function RoomListScene:ctor(level)
 			self.roomlist:setTouchEnabled(true)
 			self.roomlist:addEventListener("onTapRoomIcon", handler(self, self.onTapRoomIcon))
 		end
-	 end,SLS_SERVER_HOST .. "/award/list/" .. level)
+	 end,getUrl(AWARD_LIST_URL, level))
 	:onRequestFailed(function() 
 			AlertView.new("连接失败",nil):addTo(self)
 		end)
