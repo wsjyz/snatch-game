@@ -265,6 +265,7 @@ function GameScene:answer(item)
 		--add score
 		self.score = self.score + item.rightAnswer
 
+		-- todo send msg
 		-- sockettcp:sendMessage(ANSWER_SERVICE,data)
 	end
 end
@@ -287,31 +288,38 @@ function GameScene:changeTurns()
 	self.isHostTurn = not self.isHostTurn
 end
 
-
 --event listener
 function GameScene:onAnswerComplete(data)
 	local selectedItem = self.itemContainers[data.optionIndex]
 	if not self:isMyTurn_() then -- avoid duplicate render
 		self:markAnswer(selectedItem)
 	end
-
-	if selectedItem.rightAnswer == 0 then -- wrong
-		if self.nextPlayerIndex <= table.nums(self.players) then
-			if self.isHostTurn then 
-				self:setHost(self.players[self.nextPlayerIndex]) 
-			else
-				self:setGuest(self.players[self.nextPlayerIndex])
-			end
-			self.nextPlayerIndex = self.nextPlayerIndex + 1
-		else
-			--no more players ,game over
-			local winner = (self.isHostTurn and self.guest) or self.host
-			
-		end
-	end
 		
 	--delay for next topic
 	scheduler.performWithDelayGlobal(function() 
+		if selectedItem.rightAnswer == 0 then -- wrong
+			if self.nextPlayerIndex <= table.nums(self.players) then
+				if self.isHostTurn then 
+					self:setHost(self.players[self.nextPlayerIndex]) 
+				else
+					self:setGuest(self.players[self.nextPlayerIndex])
+				end
+				self.nextPlayerIndex = self.nextPlayerIndex + 1
+			else
+				--no more players ,game over
+				local winner = (self.isHostTurn and self.guest) or self.host
+				local winnerView = app:createView("Winner", winner):addTo(self)
+				winnerView:addEventListener("onClose", function() 
+					local winnerIsMe = true -- todo
+					if winnerIsMe then
+						--todo go fetch award
+						printf("fetch award")
+					else
+						app:enterChooseAward(app.currentLevel)
+					end
+				end)
+			end
+		end
 		self.currentTopicIndex = self.currentTopicIndex + 1
 		self:changeTurns()
 		self:showTopic()
@@ -322,6 +330,7 @@ function GameScene:onTimeBurndown()
 	local item = self.itemContainers[math.random(1,4)]
 	self:answer(item)
 end
+
 
 function GameScene:onExit()
 	if self.score > 0 then
