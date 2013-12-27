@@ -4,11 +4,13 @@
 --
 local CommonModalView = class("CommonModalView")
 
-function CommonModalView:ctor()
+function CommonModalView:ctor(needCloseBtn)
+	local addcloseBtn = true
+	if needCloseBtn and needCloseBtn == false then addcloseBtn = false end
+
 	cc.GameObject.extend(self)
     self:addComponent("components.behavior.EventProtocol"):exportMethods()
 
-    -- self.view = display.newColorLayer(ccc4(0,0,0,128))
     self.view = display.newScale9Sprite("#loginbg.png", display.cx, display.cy, CCSize(display.width,display.height))             
 
 	self.view:setTouchEnabled(true)
@@ -18,6 +20,12 @@ function CommonModalView:ctor()
 	end)
 
 	local bg = display.newSprite("#floatbg_large.png",display.cx,display.cy):addTo(self.view)
+	bg:setTouchEnabled(true)
+	bg:setTouchPriority(1)
+	bg:addTouchEventListener(function(event,x,y,preX,preY) 
+		self:dispatchEvent({name = "onBackgroudTap"})
+		return true
+	end)
 	self.bgSize_ = bg:getContentSize()
 
 	local bgXOffSet = bg:getContentSize().width/2
@@ -29,17 +37,19 @@ function CommonModalView:ctor()
 	local clsX = display.cx + bgXOffSet
 	local clsY = display.cy + bgYOffSet
 
+	if addcloseBtn then
 	--close button
-	local cls = cc.ui.UIPushButton.new({
-			normal = "#close.png",
-    		pressed = "#close_active.png",
-    		disabled = "#close_active.png"
-		})
-		:onButtonClicked(function(e) 
-			self:close()			
-		end)
-		:align(display.CENTER, clsX - 10, clsY - 10)
-		:addTo(self.view)
+		local cls = cc.ui.UIPushButton.new({
+				normal = "#close.png",
+				pressed = "#close_active.png",
+				disabled = "#close_active.png"
+			})
+			:onButtonClicked(function(e) 
+				self:close()			
+			end)
+			:align(display.CENTER, clsX - 10, clsY - 10)
+			:addTo(self.view)
+	end
 end
 
 function CommonModalView:addContentChild(node,x,y,align)
