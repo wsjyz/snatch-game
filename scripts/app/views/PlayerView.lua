@@ -18,7 +18,6 @@ function PlayerView:ctor(player)
 			color = ccc3(59, 17, 17)
 			})
 	:addTo(self,1)
-
 end
 
 function PlayerView:imgPos(x, y,withHolder)
@@ -31,6 +30,11 @@ end
 
 function PlayerView:labelPos(align, pos)
 	self.label:align(align, pos.x, pos.y)
+	return self
+end
+
+function PlayerView:labelColor(color)
+	self.label:setColor(color)
 	return self
 end
 
