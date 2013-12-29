@@ -4,10 +4,16 @@
 --
 local CommonModalView = class("CommonModalView")
 
-function CommonModalView:ctor(needCloseBtn)
-	local addcloseBtn = true
-	if needCloseBtn and needCloseBtn == false then addcloseBtn = false end
+local ZORDER = 3
 
+function CommonModalView:ctor(needCloseBtn,bgPng)
+	local addcloseBtn = true
+	if needCloseBtn and needCloseBtn == false then
+		printf("needCloseBtn value %s", needCloseBtn)
+		addcloseBtn = false 
+	end
+	local bgPng =bgPng or "#floatbg_large.png"
+	
 	cc.GameObject.extend(self)
     self:addComponent("components.behavior.EventProtocol"):exportMethods()
 
@@ -19,7 +25,7 @@ function CommonModalView:ctor(needCloseBtn)
 		return true
 	end)
 
-	local bg = display.newSprite("#floatbg_large.png",display.cx,display.cy):addTo(self.view)
+	local bg = display.newSprite(bgPng,display.cx,display.cy):addTo(self.view,ZORDER)
 	bg:setTouchEnabled(true)
 	bg:setTouchPriority(1)
 	bg:addTouchEventListener(function(event,x,y,preX,preY) 
@@ -37,7 +43,7 @@ function CommonModalView:ctor(needCloseBtn)
 	local clsX = display.cx + bgXOffSet
 	local clsY = display.cy + bgYOffSet
 
-	if addcloseBtn then
+	if addcloseBtn == true then
 	--close button
 		local cls = cc.ui.UIPushButton.new({
 				normal = "#close.png",
@@ -48,15 +54,16 @@ function CommonModalView:ctor(needCloseBtn)
 				self:close()			
 			end)
 			:align(display.CENTER, clsX - 10, clsY - 10)
-			:addTo(self.view)
+			:addTo(self.view,ZORDER)
 	end
 end
 
 function CommonModalView:addContentChild(node,x,y,align)
-	local x = x or 0
-	local y = y or 0
+	local pos = node:getPosition() or CCPoint(0, 0)
+	local x = x or pos.x
+	local y = y or pos.y
 	local align_ = align or display.CENTER
-	node:align(align_, x, y):addTo(self.view)
+	node:align(align_, x, y):addTo(self.view,ZORDER)
 end
 
 function CommonModalView:close()
