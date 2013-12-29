@@ -2,6 +2,9 @@
 -- Author: ivan.vigoss@gmail.com
 -- Date: 2013-12-08 17:07:33
 --
+
+local winRankView = import(".WinRankView")
+
 local SettingMenu = class("SettingMenu",function()
 	local node = display.newNode()
 	node:setNodeEventEnabled(true)
@@ -77,7 +80,8 @@ function SettingMenu:goBack_(event)
 end
 
 function SettingMenu:showRank_(event)
-	app:enterWinRankScene()
+	-- app:enterWinRankScene()
+	winRankView.new():addTo(self)
 end
 
 function SettingMenu:userInfo_(event)
