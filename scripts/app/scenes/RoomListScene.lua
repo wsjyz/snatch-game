@@ -2,8 +2,6 @@
 -- Author: ivan.vigoss@gmail.com
 -- Date: 2013-12-11 18:23:43
 --
-local bgLayer = import("..views.CommonBackground").new(false)
-local SettingMenu = import("..views.SettingMenu")
 local HttpClient = import("..HttpClient")
 local AlertView = import("..views.AlertView")
 local RoomList = import("..views.RoomList")
@@ -16,8 +14,11 @@ local RoomListScene = class("RoomListScene", function ()
 end)
 
 function RoomListScene:ctor(level)
-	self:addChild(bgLayer)
-	self:addChild(SettingMenu.new())
+	app:createView("CommonBackground", false):addTo(self)
+	local settingMenu = app:createView("SettingMenu"):addTo(self)
+	settingMenu:addEventListener("goBack", function() 
+		app:enterChooseLevel()
+	end)
 
 	--http get award list
 	HttpClient.new(function(data)
@@ -31,7 +32,7 @@ function RoomListScene:ctor(level)
 			self.roomlist:setTouchEnabled(true)
 			self.roomlist:addEventListener("onTapRoomIcon", handler(self, self.onTapRoomIcon))
 		end
-	 end,getUrl(AWARD_LIST_URL, level))
+	 end,getUrl(AWARD_LIST_URL,app.currentLevel))
 	:onRequestFailed(function() 
 			AlertView.new("连接失败",nil):addTo(self)
 		end)

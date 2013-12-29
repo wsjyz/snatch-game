@@ -25,6 +25,7 @@ end
 
 -- scene transition
 function MyApp:enterChooseLevel()
+    self.currentLevel = 1  -- default
 	self:enterScene("ChooseLevelScene")
 end
 

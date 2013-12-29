@@ -21,7 +21,7 @@ end
 function Countdown:start()
 	self.scheduler = scheduler.scheduleGlobal(function() 
 		self.currentNumber = self.currentNumber - self.step
-		if self.currentNumber <= 0 then
+		if self.currentNumber < 0 then
 			self:pause()
 			self:dispatchEvent({name = "onTimeBurndown"})
 		end

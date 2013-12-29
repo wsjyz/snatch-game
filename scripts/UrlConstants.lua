@@ -19,5 +19,5 @@ LOTTERY_URL = "/award/win/%s/%s" --roomId,playerId
 PRIZE_LIST_URL = "/award/get-player-prize-list"
 
 function getUrl(pattern, ...)
-	return string.format(SLS_SERVER_HOST .. pattern, ···)
+	return string.format(SLS_SERVER_HOST .. pattern, ...)
 end

@@ -129,7 +129,40 @@ function GameScene:ctor(players)
 		})
 		:onButtonClicked(function(e)
 			--todo answer
-			self:answer(e.target)
+			-- self:answer(e.target)
+			--no more players ,game over
+				local winner = (self.isHostTurn and self.guest) or self.host
+				local winnerView = app:createView("Winner", winner):addTo(self)
+				winnerView:addEventListener("onClose", function() 
+					local winnerIsMe = true -- todo
+					if winnerIsMe then
+						local lottery = app:createView("Lottery"):addTo(self) -- 抽奖
+						lottery:addEventListener("onSuccess",function()
+							--抽奖成功
+							local treasure = app:createView("Treasure"):addTo(self)
+							treasure:addEventListener("onClose",function()
+								-- todo
+								local shareInfo =app:createView("ShareInfo", {
+									awardName = "IPHONE"
+								}):addTo(self)
+
+								shareInfo:addEventListener("onShare", function(e)
+									app:createView("SharePanel")
+								end)
+							end)
+						end)
+						lottery:addEventListener("onFailed", function()
+							--抽奖失败
+							local lotteryFaild = app:createView("LotteryFailed"):addTo(self)
+							lotteryFaild:addEventListener("onClose",function(e)
+								app:enterChooseAward(app.currentLevel)		 
+							end)
+						end)
+					else
+						app:enterChooseAward(app.currentLevel)
+					end
+				end)
+			
 		 end)
 		:align(display.CENTER, x, y)
 		:addTo(self)
@@ -265,8 +298,7 @@ function GameScene:answer(item)
 		--add score
 		self.score = self.score + item.rightAnswer
 
-		-- todo send msg
-		-- sockettcp:sendMessage(ANSWER_SERVICE,data)
+		sockettcp:sendMessage(ANSWER_SERVICE,data)
 	end
 end
 
@@ -312,14 +344,35 @@ function GameScene:onAnswerComplete(data)
 				winnerView:addEventListener("onClose", function() 
 					local winnerIsMe = true -- todo
 					if winnerIsMe then
-						--todo go fetch award
-						printf("fetch award")
+						local lottery = app:createView("Lottery"):addTo(self) -- 抽奖
+						lottery:addEventListener("onSuccess",function()
+							--抽奖成功
+							local treasure = app:createView("Treasure"):addTo(self)
+							treasure:addEventListener("onClose",function()
+								-- todo
+								local shareInfo =app:createView("ShareInfo", {
+									awardName = "IPHONE"
+								}):addTo(self)
+
+								shareInfo:addEventListener("onShare", function(e)
+									app:createView("SharePanel")
+								end)
+							end)
+						end)
+						lottery:addEventListener("onFailed", function()
+							--抽奖失败
+							local lotteryFaild = app:createView("LotteryFailed"):addTo(self)
+							lotteryFaild:addEventListener("onClose",function(e)
+								app:enterChooseAward(app.currentLevel)		 
+							end)
+						end)
 					else
 						app:enterChooseAward(app.currentLevel)
 					end
 				end)
 			end
 		end
+		--next topic
 		self.currentTopicIndex = self.currentTopicIndex + 1
 		self:changeTurns()
 		self:showTopic()
