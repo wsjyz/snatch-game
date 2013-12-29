@@ -55,11 +55,14 @@ function ProfileView:setLabelValuesWithPlayer(player)
 	ProfileView.Labels[5].value = player.address;
 end
 
-function ProfileView:ctor(player)
+function ProfileView:ctor()
 	cc.GameObject.extend(self):addComponent("components.behavior.EventProtocol"):exportMethods()
 
 	local bgWidth = self:getContentSize().width
 	local bgHeight = self:getContentSize().height
+
+	-- TODO: temp comment
+	-- local player = app.me
 
 	if player == nil then
 		player = self:getProfilePlayer()
@@ -75,9 +78,9 @@ function ProfileView:ctor(player)
 
 	-- add rank
 	local rank = ui.newTTFLabel({text = "当前排名:第" .. player.ranking .. "名", size = 24, color = display.COLOR_WHITE})
-	:align(display.CENTER_LEFT, display.cx + 80, display.cy + 150) 
-	:addTo(self)
-
+				:align(display.CENTER_LEFT, display.cx + 80, display.cy + 150) 
+				:addTo(self)
+			
 	-- add level
 	ui.newTTFLabel({text = player.currentTitle, size = 24, color = ccc3(255, 255, 0)})
 		:align(display.CENTER_LEFT, display.cx - 50, display.cy + 100) 

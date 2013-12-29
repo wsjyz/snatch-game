@@ -4,6 +4,7 @@
 --
 
 local winRankView = import(".WinRankView")
+local profileCenterView = import(".ProfileCenterView")
 
 local SettingMenu = class("SettingMenu",function()
 	local node = display.newNode()
@@ -85,7 +86,8 @@ function SettingMenu:showRank_(event)
 end
 
 function SettingMenu:userInfo_(event)
-	app:enterProfileCenter()
+	--app:enterProfileCenter()
+	profileCenterView.new():addTo(self)
 end
 
 function SettingMenu:volumeControl_(event)

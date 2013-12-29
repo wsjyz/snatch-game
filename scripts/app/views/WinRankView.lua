@@ -3,6 +3,8 @@
 -- Date: 2013-12-29 12:02:41
 --
 local CommonModalView = import(".CommonModalView")
+local httpClient = import("..HttpClient")
+
 local WinRankView = class("WinRankView", function()
     return display.newNode()
 end)
@@ -14,12 +16,15 @@ function WinRankView:getRankList()
         { nickName = "王五", rmb = 220}
     }
 end
-function WinRankView:ctor(rankList)
+function WinRankView:ctor()
 
-	local modalLayer = CommonModalView.new()
+	local modalLayer = CommonModalView.new(true, "#floatbg_gold.png")
+	local rankList = nil
 
-	local bgInner = display.newSprite("#floatbg_gold.png")
-    modalLayer:addContentChild(bgInner, display.cx, display.cy, display.CENTER)
+	httpClient.new(function(result)
+					rankList = result
+					end,
+					getUrl(PRIZE_LIST_URL)):start()
 
     if rankList == nil then
         rankList = self:getRankList()
