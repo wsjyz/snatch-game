@@ -50,8 +50,6 @@ function PlayerWaitingScene:ctor(players)
 		display.newSprite("#pad.png"):align(display.CENTER, x, y):addTo(self)
 	end
 
-
-
 	--leizhu
 	display.newSprite("#leizhu.png")
 	:align(display.CENTER_RIGHT, display.cx - 60, display.cy + 230)
@@ -60,17 +58,28 @@ function PlayerWaitingScene:ctor(players)
 	sockettcp:addEventListener("ON_OTHER_USER_COME_IN", handler(self, self.onOtherPlayerComeIn))
 	sockettcp:addEventListener("ON_OTHER_USER_LEFT", handler(self, self.onOtherPlayerLeft))
 
+	self.settingMenu = app:createView("SettingMenu"):addTo(self)
+	self.settingMenu:addEventListener("goBack", handler(self, self.leftRoom))
+
 		--init player
 	for index, player in ipairs(players) do
 		local canStart = self:onOtherPlayerComeIn(player)
 		if canStart then break end
 	end
+
+end
+
+function PlayerWaitingScene:leftRoom()
+	local data = clone(app.me)
+	data.roomId = app.currentRoomId
+	data.seatNo = self.mySeat
+
+	printf("user left room ,send data %s", json.encode(data))
+	sockettcp:sendMessage("LEFT_ROOM_SERVICE", data)
 end
 
 function PlayerWaitingScene:onOtherPlayerComeIn(player)
-	if not self.roomId then
-		self.roomId = player.roomId
-	end
+	if player.playerId == app.me.playerId then self.mySeat = player.setNo end
 
 	local seatNo = ( player.seatNo or 0 ) + 1
 	local x,y = seatPositons[seatNo].x,seatPositons[seatNo].y
@@ -103,11 +112,9 @@ function PlayerWaitingScene:checkGameStart()
 		self.initCountdown:show()
 		--player animation for start
 		self.initCountdown:playAnimationOnce(self.countdownAnimation, false, function() 
-			HttpClient.new(function(topicList) 
-				printf("load topicList ,as follows : %s", json.encode(topicList))
-				--todo save topicList on local
+			app:loadTopicList(function() 
 				display.replaceScene(GameScene.new(self.players))
-			end ,getUrl(TOPIC_LIST_URL, app.currentLevel)):start()
+			end)
 		end)
 		return true
 	end
