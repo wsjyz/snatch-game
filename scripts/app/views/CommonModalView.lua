@@ -7,11 +7,6 @@ local CommonModalView = class("CommonModalView")
 local ZORDER = 3
 
 function CommonModalView:ctor(needCloseBtn,bgPng)
-	local addcloseBtn = true
-	if needCloseBtn and needCloseBtn == false then
-		printf("needCloseBtn value %s", needCloseBtn)
-		addcloseBtn = false 
-	end
 	local bgPng =bgPng or "#floatbg_large.png"
 	
 	cc.GameObject.extend(self)
@@ -43,7 +38,7 @@ function CommonModalView:ctor(needCloseBtn,bgPng)
 	local clsX = display.cx + bgXOffSet
 	local clsY = display.cy + bgYOffSet
 
-	if addcloseBtn == true then
+	if needCloseBtn == nil or not needCloseBtn == false then
 	--close button
 		local cls = cc.ui.UIPushButton.new({
 				normal = "#close.png",
