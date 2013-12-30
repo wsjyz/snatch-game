@@ -19,34 +19,16 @@ function RoomListScene:ctor(level)
 	settingMenu:addEventListener("goBack", function() 
 		app:enterChooseLevel()
 	end)
-
-	--http get award list
-	HttpClient.new(function(data)
-		if #data == 0 then 
-			AlertView.new("无任何房间列表",nil):addTo(self)
-		else
-			--new Roomlist
-			local rect = CCRect(display.left + 140, display.bottom + 80, display.width - 120 , display.height - 120)
-			self.roomlist = RoomList.new(rect,data)
-				:addTo(self)
-			self.roomlist:setTouchEnabled(true)
-			self.roomlist:addEventListener("onTapRoomIcon", handler(self, self.onTapRoomIcon))
-		end
-	 end,getUrl(AWARD_LIST_URL,app.currentLevel))
-	:onRequestFailed(function() 
-			AlertView.new("连接失败",nil):addTo(self)
-		end)
-	:start()
 	
 	--quick start
 	cc.ui.UIPushButton.new({
-			normal = "#startbtn.png",
-    		pressed = "#startbtn_active.png",
-    		disabled = "#startbtn_active.png"
-		})
+		normal = "#startbtn.png",
+		pressed = "#startbtn_active.png",
+		disabled = "#startbtn_active.png"
+	})
 	:onButtonClicked(function(e)
 		self:quickStart()	
-		end)
+	end)
 	:align(display.CENTER, display.cx, display.cy + 200)
 	:addTo(self)
 
@@ -54,24 +36,69 @@ function RoomListScene:ctor(level)
 
 end
 
+
+function RoomListScene:onEnter()
+	--http get award list
+	HttpClient.new(function(data)
+		if #data == 0 then
+			AlertView.new("无任何房间列表",nil):addTo(self)
+		else
+			self.roomlist = data
+			--new Roomlist
+			local rect = CCRect(display.left + 140, display.bottom + 80, display.width - 120 , display.height - 120)
+			self.roomlistView = RoomList.new(rect,data):addTo(self)
+			self.roomlistView:setTouchEnabled(true)
+			self.roomlistView:addEventListener("onTapRoomIcon", handler(self, self.onTapRoomIcon))
+		end
+	 end,getUrl(AWARD_LIST_URL,app.currentLevel))
+	:onRequestFailed(function() 
+		AlertView.new("连接失败",nil):addTo(self)
+	end)
+	:start()
+end
+
+function RoomListScene:quickStart()
+	if self.roomlist then
+		local randomRoom = self.roomlist[math.random(1,table.nums(self.roomlist))]
+		self:enterRoom(randomRoom)
+	end	
+end
+
+function RoomListScene:enterRoom(award)
+	app.currentAward = award
+	local data = clone(app.me)
+	data.awardId = award.awardId
+
+	printf("enterRoom send data %s", json.encode(data))
+	sockettcp:sendMessage(ENTER_ROOM_SERVICE, data)
+end
+
+--event
 function RoomListScene:onEnterRoom(event)
-	print(event.name)
+	local players = event.data
+	printf("onEnterRoom response data %s", json.encode(players))
+	
+	app.currentRoomId = players[1].roomId
+	local playerWaitingScene = PlayerWaitingScene.new(players)
+	display.replaceScene(playerWaitingScene)
 end
 
 
 function RoomListScene:onTapRoomIcon(event)
+	printf("onTapRoomIcon called")
 	-- show modal 
+	local award = event.data
 	local modalLayer = CommonModalView.new()
-	local roomView = RoomView.new(event.data)
+	local roomView = RoomView.new(award)
 	modalLayer:addContentChild(roomView,0,20)
 	--add quick start button
 	local quickStart = cc.ui.UIPushButton.new({
-			normal = "#faststartbtn.png",
-    		pressed = "#faststartbtn_active.png",
-    		disabled = "#faststartbtn_active.png"
-		})
+		normal = "#faststartbtn.png",
+		pressed = "#faststartbtn_active.png",
+		disabled = "#faststartbtn_active.png"
+	})
 	:onButtonClicked(function(e) 
-		self:quickStart()
+		self:enterRoom(award.awardId)
 	end)
 	modalLayer:addContentChild(quickStart, display.cx - 5, display.cy - 120, display.CENTER_RIGHT)
 
@@ -87,68 +114,11 @@ function RoomListScene:onTapRoomIcon(event)
 
 	self:addChild(modalLayer:getView())
 
-	self.roomlist:setTouchEnabled(false)
+	self.roomlistView:setTouchEnabled(false)
 	modalLayer:addEventListener("onClose", function() 
-		self.roomlist:setTouchEnabled(true)
+		self.roomlistView:setTouchEnabled(true)
 	end)
 
-end
-
-function RoomListScene:quickStart()
-	--todo quick start
-	-- sockettcp:sendMessage(ENTER_ROOM_SERVICE, {
-	-- 		userId = "ivan2",
-	-- 		nickName = "Ivan",
-	-- 		awardId = "ROOM110",
-	-- 		male = 1
-	-- 	})
-	local playerWaitingScene = PlayerWaitingScene.new({
-		{
-			userId = "ivan2",
-			playerName = "Ivan1",
-			awardId = "ROOM110",
-			seatNo = 0,
-			male = 1
-		},
-		{
-			userId = "ivan3",
-			playerName = "Ivan3",
-			awardId = "ROOM110",
-			seatNo = 1,
-			male = 0
-		},
-		{
-			userId = "ivan4",
-			playerName = "Ivan4",
-			awardId = "ROOM110",
-			seatNo = 2,
-			male = 0
-		},
-		{
-			userId = "ivan5",
-			playerName = "Ivan5",
-			awardId = "ROOM110",
-			seatNo = 3,
-			male = 0
-		},
-		{
-			userId = "ivan6",
-			playerName = "Ivan6",
-			awardId = "ROOM110",
-			seatNo = 4,
-			male = 1
-		},
-		{
-			userId = "ivan7",
-			playerName = "Ivan7",
-			awardId = "ROOM110",
-			seatNo = 5,
-			male = 1
-		}
-	})
-
-	display.replaceScene(playerWaitingScene)
-	
 end
 
 return RoomListScene
