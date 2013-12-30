@@ -21,73 +21,7 @@ function GameScene:ctor(players)
 	self.isHostTurn = true 
 	self.answerMarks = {} --答案标记
 	self.score = 0 --本场自己的积分
-	--mock 
-	self.topicList = {
-		{
-			topicId = "t1",
-			title = "地球公转一周是多久？地球公转一周是多久？地球公转一周是多久？地球公转一周是多久？地球公转一周是多久？",
-			level = 1,
-			options = {
-				{
-					itemId = "i1",
-					topicId = "t1",
-					content = "一周",
-					right = 0
-				},
-				{
-					itemId = "i2",
-					topicId = "t1",
-					content = "一天",
-					right = 0
-				},
-				{
-					itemId = "i3",
-					topicId = "t1",
-					content = "一月",
-					right = 0
-				},
-				{
-					itemId = "i4",
-					topicId = "t1",
-					content = "一年",
-					right = 1
-				}
-			}
-
-		},
-		{
-			topicId = "t1",
-			title = "地球自转一周是多久？地球自转一周是多久？地球自转一周是多久？地球自转一周是多久？地球自转一周是多久？",
-			level = 1,
-			options = {
-				{
-					itemId = "i1",
-					topicId = "t1",
-					content = "一周",
-					right = 0
-				},
-				{
-					itemId = "i2",
-					topicId = "t1",
-					content = "一天",
-					right = 1
-				},
-				{
-					itemId = "i3",
-					topicId = "t1",
-					content = "一月",
-					right = 0
-				},
-				{
-					itemId = "i4",
-					topicId = "t1",
-					content = "一年",
-					right = 0
-				}
-			}
-
-		}
-	}
+	
 	self.titleLabel = nil
 
 	self:setHost(players[1])
@@ -106,7 +40,7 @@ function GameScene:ctor(players)
 	self.guestCountdown:addEventListener("onTimeBurndown", handler(self, self.onTimeBurndown))
 
 	local vsContainer = display.newSprite("#vs_container.png", display.cx, display.top - 120):addTo(self)
-	local vs = display.newSprite("#vs1.png", display.cx, display.top - 150):addTo(self,2)
+	local vs = display.newSprite("#vs1.png", display.cx, display.top - 150):addTo(self)
 
 	local leizhu = display.newSprite("#leizhu.png")
 	:align(display.LEFT_CENTER, display.left + imgOffsetX + 50, display.top - imgOffsetY + 90)
@@ -129,40 +63,7 @@ function GameScene:ctor(players)
 		})
 		:onButtonClicked(function(e)
 			--todo answer
-			-- self:answer(e.target)
-			--no more players ,game over
-				local winner = (self.isHostTurn and self.guest) or self.host
-				local winnerView = app:createView("Winner", winner):addTo(self)
-				winnerView:addEventListener("onClose", function() 
-					local winnerIsMe = true -- todo
-					if winnerIsMe then
-						local lottery = app:createView("Lottery"):addTo(self) -- 抽奖
-						lottery:addEventListener("onSuccess",function()
-							--抽奖成功
-							local treasure = app:createView("Treasure"):addTo(self)
-							treasure:addEventListener("onClose",function()
-								-- todo
-								local shareInfo =app:createView("ShareInfo", {
-									awardName = "IPHONE"
-								}):addTo(self)
-
-								shareInfo:addEventListener("onShare", function(e)
-									app:createView("SharePanel")
-								end)
-							end)
-						end)
-						lottery:addEventListener("onFailed", function()
-							--抽奖失败
-							local lotteryFaild = app:createView("LotteryFailed"):addTo(self)
-							lotteryFaild:addEventListener("onClose",function(e)
-								app:enterChooseAward(app.currentLevel)		 
-							end)
-						end)
-					else
-						app:enterChooseAward(app.currentLevel)
-					end
-				end)
-			
+			self:answer(e.target)
 		 end)
 		:align(display.CENTER, x, y)
 		:addTo(self)
@@ -218,10 +119,10 @@ function GameScene:resetView()
 end
 
 function GameScene:showTopic()
-	if self.currentTopicIndex > table.nums(self.topicList) then
+	if self.currentTopicIndex > table.nums(app.topicList) then
 		throw("error", "no more topic")
 	end
-	local topic = self.topicList[self.currentTopicIndex]
+	local topic = app.topicList[self.currentTopicIndex]
 	
 	self:resetView()
 
@@ -261,7 +162,8 @@ function GameScene:showTopic()
 end
 
 function GameScene:isMyTurn_()
-	return true
+	local currentPlayer = (self.isHostTurn and self.host) or self.guest
+	return currentPlayer.playerId == app.me.playerId
 end
 
 function GameScene:setItemEnabled(enabled)
@@ -293,7 +195,7 @@ function GameScene:answer(item)
 			roomId = app.currentRoomId,
 			optionIndex = item.itemIndex
 		}
-		printf("%s selected answer : %d ,send data : \n %s", self.host.playerName ,item.itemIndex,json.encode(data))
+		printf("%s selected answer : %d ,send data : \n %s", self.host.nickName ,item.itemIndex,json.encode(data))
 		
 		--add score
 		self.score = self.score + item.rightAnswer
@@ -342,7 +244,7 @@ function GameScene:onAnswerComplete(data)
 				local winner = (self.isHostTurn and self.guest) or self.host
 				local winnerView = app:createView("Winner", winner):addTo(self)
 				winnerView:addEventListener("onClose", function() 
-					local winnerIsMe = true -- todo
+					local winnerIsMe = winner.playerId == app.me.playerId
 					if winnerIsMe then
 						local lottery = app:createView("Lottery"):addTo(self) -- 抽奖
 						lottery:addEventListener("onSuccess",function()
@@ -350,10 +252,7 @@ function GameScene:onAnswerComplete(data)
 							local treasure = app:createView("Treasure"):addTo(self)
 							treasure:addEventListener("onClose",function()
 								-- todo
-								local shareInfo =app:createView("ShareInfo", {
-									awardName = "IPHONE"
-								}):addTo(self)
-
+								local shareInfo = app:createView("ShareInfo", app.currentAward):addTo(self)
 								shareInfo:addEventListener("onShare", function(e)
 									app:createView("SharePanel")
 								end)
