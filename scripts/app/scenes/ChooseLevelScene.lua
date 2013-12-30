@@ -17,6 +17,7 @@ function ChooseLevelScene:ctor()
 	cc.EventProxy.new(sockettcp , self)
 	:addEventListener("ON_ENTER_ROOM",self.onEnterRoom,self)
 
+	local experience = app.me.experience or 0 
 
 	CommonBackground.new():addTo(self)
 	--乡试
@@ -52,7 +53,7 @@ function ChooseLevelScene:ctor()
 		:onButtonRelease(function (e) 
 			e.target:setScale(1.0)
 		end)
-		:setButtonEnabled(false)
+		:setButtonEnabled(experience >= 300)
 		:align(display.CENTER, display.cx, display.cy - LEVEL_OFFSET_Y)
 		:addTo(self)
 	--殿试
@@ -70,7 +71,7 @@ function ChooseLevelScene:ctor()
 		:onButtonRelease(function (e) 
 			e.target:setScale(1.0)
 		end)
-		:setButtonEnabled(false)
+		:setButtonEnabled(experience >= 700)
 		:align(display.CENTER, display.cx + LEVEL_OFFSET_X , display.cy - LEVEL_OFFSET_Y)
 		:addTo(self)
 	--SettingMenu	
@@ -81,7 +82,7 @@ end
 
 function ChooseLevelScene:goBack(event)
 	printf("goBack called")
-	app:enterScene("LoginScene")
+	app:exit()
 end
 
 return ChooseLevelScene
