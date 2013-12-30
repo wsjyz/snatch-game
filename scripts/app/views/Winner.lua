@@ -12,24 +12,26 @@ end)
 function Winner:ctor(winner)
 	self.modalLayer = app:createView("CommonModalView",false)
 	local modalOffsetX = self.modalLayer:getOffsetPoint().x
+	local startX = display.cx - modalOffsetX + 100
 	--恭喜
 	local gongxiLabel = ui.newTTFLabel({
 			text = "恭喜"
 		})
-	self.modalLayer:addContentChild(gongxiLabel, display.cx - modalOffsetX + 50, display.cy, display.LEFT_CENTER)
+	self.modalLayer:addContentChild(gongxiLabel, startX, display.cy, display.LEFT_CENTER)
 
-	--winner placeholder
-	local winnerView = app:createView("PlayerView", winner)
-		:imgPos(display.cx - modalOffsetX + 100, display.cy, false)
-		:labelPos(display.CENTER, CCPoint(display.cx - modalOffsetX + 100, display.cy - 100))
-		:labelColor(ccc3(255, 244, 110))
-	self.modalLayer:addContentChild(winnerView, display.cx - modalOffsetX + 100, display.cy)
-
+	startX = startX + gongxiLabel:getContentSize().width
+	local winnerLabel = ui.newTTFLabel({
+			text = winner.nickName,
+			color = ccc3(255, 244, 110)
+		})
+	self.modalLayer:addContentChild(winnerLabel, startX, display.cy, display.LEFT_CENTER)
+	
+	startX = startX + gongxiLabel:winnerLabel().width
 	-- other text
 	local otherLabel =ui.newTTFLabel({
-			text = "成为擂主"
-		})
-	self.modalLayer:addContentChild(otherLabel, display.cx + modalOffsetX - 50, display.cy, display.RIGHT_CENTER)
+		text = "成为擂主"
+	})
+	self.modalLayer:addContentChild(otherLabel, startX, display.cy, display.LEFT_CENTER)
 
 	self:addChild(self.modalLayer:getView())
 	self.modalLayer:addEventListener("onBackgroudTap", handler(self,self.onClose))
