@@ -5,8 +5,9 @@
 local HttpClient = class("HttpClient")
 
 
-function HttpClient:ctor(callback,url,params)
-	self.listener = callback
+function HttpClient:ctor(callback,url,params,contentType)
+	self.contentType = contentType or "json" --byte
+	self.listener = callback 
 	local method = "GET"
 	if params and type(params) == "table" then 
 		method = "POST" 
@@ -20,6 +21,11 @@ function HttpClient:ctor(callback,url,params)
 		for key,value in pairs(params) do
 			self.request:addPOSTValue(key, value)
 		end
+	end
+
+	self.onRequestFailedListener__ = function() -- default handler
+		printf("alert when onRequestFailed") 
+		device.showAlert("提示", "网络连接错误", {"确定"})
 	end
 	
 end
@@ -36,9 +42,7 @@ function HttpClient:onResponse(event)
         if request:getResponseStatusCode() ~= 200 then
         else
             echoInfo("REQUEST   getResponseDataLength() = %d", request:getResponseDataLength())
-            echoInfo("REQUEST  getResponseData() =\n%s",  request:getResponseData())
-            local result = json.decode(request:getResponseString())
-            
+            local result = (self.contentType == "json" and json.decode(request:getResponseString())) or request:getResponseData()
             self.listener(result)
         end
     else
@@ -56,7 +60,7 @@ end
 
 function HttpClient:onRequestFailed( callback )
 	assert(type(callback) == "function","callback must be function")
-	self.onRequestFailedListener__ = callback
+	self.onRequestFailedListener__ = callback 
 	return self
 end
 
