@@ -18,7 +18,7 @@ LoginForm.RADIO_BUTTON_IMAGES = {
     off_disabled = "#radio_off.png",
     on = "#radio_on.png",
     on_pressed = "#radio_on.png",
-    on_disabled = "#radio_on.png",
+    on_disabled = "#radio_on.png"
 }
 
 function LoginForm:ctor()
@@ -41,9 +41,9 @@ function LoginForm:ctor()
             :align(display.LEFT_CENTER))
 	:setButtonsLayoutMargin(10, 10, 10, 10)
 	:onButtonSelectChanged(function(event)
-            printf("Option %d selected, Option %d unselected", event.selected, event.last)
-            if event.selected ~= 1 then self.male = 0 else self.male = 1 end 
-        end)
+        printf("Option %d selected, Option %d unselected", event.selected, event.last)
+        if event.selected ~= 1 then self.male = 0 else self.male = 1 end 
+    end)
     :align(display.CENTER_LEFT, display.cx - bgWidth/2 + 150, display.cy + 20)
     :addTo(self)
 
@@ -51,19 +51,7 @@ function LoginForm:ctor()
 	self.loginName = ui.newEditBox({
 		image = "#input.png",
 		size = cc.size(330,50),
-        listener = function(event, editbox)
-            if event == "began" then
-                self:onEditBoxBegan(editbox)
-            elseif event == "ended" then
-                self:onEditBoxEnded(editbox)
-            elseif event == "return" then
-                self:onEditBoxReturn(editbox)
-            elseif event == "changed" then
-                self:onEditBoxChanged(editbox)
-            else
-                printf("EditBox event %s", tostring(event))
-            end
-        end
+		listener = function(event,editbox) end
 		})
 	:align(display.CENTER_LEFT, display.cx - bgWidth/2 + 150, display.cy)
 	:addTo(self)
@@ -74,28 +62,15 @@ function LoginForm:ctor()
 
 	--add random button
 	cc.ui.UIPushButton.new({
-			normal = "#randombtn.png",
-    		pressed = "#randombtn_active.png",
-    		disabled = "#randombtn_active.png"
-		})
-	 :onButtonClicked(function(e)
-			--todo generate random name from server
-			local button = e.target
-			
-			httpClient.new(function (data)
-				self.loginName:setText(data)
-			 end, getUrl(RANDOM_NAME_URL))
-			:onRequestFailed(function(requestEvent)
-					self.loginName:hide()
-					alert.new("连接失败",nil,function(closeEvent)
-							self.loginName:show()
-					  end ):addTo(self)
-				end)
-			:start()
-
-		end)
-	 :align(display.CENTER_RIGHT, display.cx + bgWidth/2 - 150, display.cy)
-	 :addTo(self)
+		normal = "#randombtn.png",
+		pressed = "#randombtn_active.png",
+		disabled = "#randombtn_active.png"
+	})
+	:onButtonClicked(function(e)
+		self:setRandomName()
+	end)
+	:align(display.CENTER_RIGHT, display.cx + bgWidth/2 - 150, display.cy)
+	:addTo(self)
 
 	--add login button
 	cc.ui.UIPushButton.new({
@@ -104,23 +79,7 @@ function LoginForm:ctor()
     		disabled = "#loginbtn_active.png"
 		})
 	:onButtonClicked(function(event) 
-		--todo : get device id from luaj or luaoc
-		--todo : login with given name 
-			local button = event.target
-			local loginName = self.loginName:getText()
-			if loginName and string.trim(loginName) then
-				httpClient.new(function(event)
-					--todo 
-					end,
-					getUrl(RIGESTER_URL),
-					{
-						playerId = device.getOpenUDID(),
-						playerName = loginName,
-						male = self.male
-					}):start()
-
-			end	
-			app:enterChooseLevel()
+		self:register()			
 	end)
 	:align(display.TOP_CENTER, display.cx, display.cy - 70)
 	:addTo(self)
@@ -128,21 +87,40 @@ function LoginForm:ctor()
  	self:setZOrder(LOGIN_FORM_ZORDER)
 end
 
-
-function LoginForm:onEditBoxBegan(editbox)
-    printf("editBox1 event began : text = %s", editbox:getText())
+function LoginForm:setRandomName()
+	httpClient.new(function (data)
+		self.loginName:setText(data)
+	 end, getUrl(RANDOM_NAME_URL))
+	:onRequestFailed(function(requestEvent)
+		self.loginName:hide()
+		alert.new("连接失败",nil,function(closeEvent)
+				self.loginName:show()
+		  end )
+		:addTo(self)
+	end)
+	:start()	
 end
 
-function LoginForm:onEditBoxEnded(editbox)
-    printf("editBox1 event ended : %s", editbox:getText())
-end
+function LoginForm:register()
+	local loginName = self.loginName:getText()
+	if loginName == nil or string.trim(loginName) == "" then 
+		self:setRandomName()
+		loginName = self.loginName:getText()
+	end
 
-function LoginForm:onEditBoxReturn(editbox)
-    printf("editBox1 event return : %s", editbox:getText())
-end
+	local postData = {
+			playerId = device.getOpenUDID(),
+			nickName = loginName,
+			male = self.male
+		}
+	httpClient.new(function(data)
+		--todo 
+			app.me = postData
+			app:enterChooseLevel()
+		end,
+		getUrl(RIGESTER_URL),postData)
+	:start()
 
-function LoginForm:onEditBoxChanged(editbox)
-    printf("editBox1 event changed : %s", editbox:getText())
 end
 
 function LoginForm:onEnter()
