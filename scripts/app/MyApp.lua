@@ -7,6 +7,7 @@ require("framework.cc.init")
 
 local MyApp = class("MyApp", cc.mvc.AppBase)
 local HttpClient = import(".HttpClient")
+local MessageCenter = import(".MessageCenter")
 
 function MyApp:ctor()
     MyApp.super.ctor(self)
@@ -34,16 +35,7 @@ function MyApp:run()
     end
 
     --check weather exists in server
-    HttpClient.new(function(player) 
-        if player then
-            self.me = player
-            self:enterChooseLevel()
-        else
-            self:enterLoginScene()
-        end
-    end,getUrl(PLAYER_INFO_URL, device.getOpenUDID()))
-    :start()
-
+    self:enterScene("MainScene")
 end
 
 function MyApp:loadTopicList(callback)
@@ -54,13 +46,24 @@ function MyApp:loadTopicList(callback)
     end ,getUrl(TOPIC_LIST_URL, self.currentLevel)):start()
 end
 
+function MyApp:initSocket()
+    -- HttpClient.new(function(hall) 
+
+        -- if hall then
+        --     MessageCenter.new(hall.host,hall.port)
+        -- else
+        --     device.showAlert("提示", "服务器地址列表为空", {"确定"})
+        -- end
+    -- end,getUrl(HALL_INFO_URL))
+    MessageCenter.new("127.0.0.1",9110)
+end
+
 -- scene transition
 function MyApp:enterLoginScene()
    self:enterScene("LoginScene") 
 end
 
 function MyApp:enterChooseLevel()
-    audio.playMusic(GAME_MUSIC.hall)
     self.currentLevel = 1  -- default
 	self:enterScene("ChooseLevelScene")
 end
