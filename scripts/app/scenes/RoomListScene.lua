@@ -33,6 +33,7 @@ function RoomListScene:ctor(level)
 		disabled = "#startbtn_active.png"
 	})
 	:onButtonClicked(function(e)
+		audio.playSound(GAME_SOUND["tapButton"])
 		self:quickStart()	
 	end)
 	:align(display.CENTER, display.cx, display.cy + 200)
@@ -93,7 +94,7 @@ end
 
 
 function RoomListScene:onTapRoomIcon(event)
-	printf("onTapRoomIcon called")
+	audio.playSound(GAME_SOUND["tapButton"])
 	-- show modal 
 	local award = event.data
 	local modalLayer = CommonModalView.new()

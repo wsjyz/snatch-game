@@ -63,6 +63,7 @@ end
 
 function CommonModalView:close()
 	self.view:removeFromParent()
+	audio.playSound(GAME_SOUND["tapButton"])
 	self:dispatchEvent({name = "onClose"})
 end
 

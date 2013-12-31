@@ -111,7 +111,7 @@ function PlayerWaitingScene:onOtherPlayerLeft(player)
 end
 
 function PlayerWaitingScene:checkGameStart()
-	if table.nums(self.seats) == 6 then
+	if table.nums(self.seats) == 2 then
 		self.timerPlaceHolder:show() 
 		self.initCountdown:show()
 		--player animation for start

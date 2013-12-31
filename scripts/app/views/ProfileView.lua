@@ -109,9 +109,11 @@ function ProfileView:ctor()
 
 		-- add label btn
 		cc.ui.UIPushButton.new("#inputbox2.png", {scale9 = true})
+		:align(display.LEFT_CENTER, locX + 70, locY - 45 * i)
         :setButtonSize(300, 40)
+        :setButtonLabelAlignment(display.LEFT_CENTER)
+        :setButtonLabelOffset(-145,0)
         :setButtonLabel(cc.ui.UILabel.new({text = label.value, color = ccc3(95, 41, 0),size = 22}))
-        :align(display.LEFT_CENTER, locX + 70, locY - 45 * i)
 		:addTo(self)
 	end
 end
