@@ -2,12 +2,14 @@
 -- Author: Alex
 -- Date: 2013-12-29 13:35:44
 --
-local CommonModalView = import(".CommonModalView")
 local ProfileView = import(".ProfileView")
 local AwardView = import(".AwardView")
 
 local ProfileCenterView = class("ProfileCenterView", function()
-    return display.newNode()
+    local node = display.newNode()
+    node:setNodeEventEnabled(true)
+    require(cc.PACKAGE_NAME .. ".api.EventProtocol").extend(node)
+    return node
 end)
 
 ProfileCenterView.PROFILE_BUTTON_IMAGES = {
@@ -25,20 +27,18 @@ ProfileCenterView.AWARD_BUTTON_IMAGES = {
 }
 
 function ProfileCenterView:ctor()
-
-    local modalLayer = CommonModalView.new(true, "#floatbg_large.png")
-
+    self.modalLayer = app:createView("CommonModalView")
     -- init profile and award view
     self.profileView = ProfileView.new() 
     self.awardView = AwardView.new()
 
     self.awardView:setVisible(false)
    
-    modalLayer:addContentChild(self.profileView, 0, 0, display.CENTER)
-    modalLayer:addContentChild(self.awardView, 0, 0, display.CENTER)
+    self.modalLayer:addContentChild(self.profileView, 0, 0, display.CENTER)
+    self.modalLayer:addContentChild(self.awardView, 0, 0, display.CENTER)
 
-    local bgWidth = modalLayer:getContentSize().width
-    local bgHeight = modalLayer:getContentSize().height
+    local bgWidth = self.modalLayer:getContentSize().width
+    local bgHeight = self.modalLayer:getContentSize().height
 
     -- add btn group
     local btnGroup = cc.ui.UICheckBoxButtonGroup.new(display.TOP_TO_BOTTOM)
@@ -59,9 +59,16 @@ function ProfileCenterView:ctor()
             end 
         end)
     
-    modalLayer:addContentChild(btnGroup, display.cx - bgWidth/2 + 35, display.cy - 130, display.LEFT_TOP)
+    self.modalLayer:addContentChild(btnGroup, display.cx - bgWidth/2 + 35, display.cy - 130, display.LEFT_TOP)
 
-    self:addChild(modalLayer:getView())
+    --onclose
+    self.modalLayer:addEventListener("onClose", handler(self, self.onClose))
+
+    self:addChild(self.modalLayer:getView())
+end
+
+function ProfileCenterView:onClose()
+    self:dispatchEvent({name = "onClose"})
 end
 
 return ProfileCenterView

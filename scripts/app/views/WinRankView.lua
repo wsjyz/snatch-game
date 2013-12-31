@@ -3,10 +3,13 @@
 -- Date: 2013-12-29 12:02:41
 --
 local CommonModalView = import(".CommonModalView")
-local httpClient = import("..HttpClient")
+local HttpClient = import("..HttpClient")
 
 local WinRankView = class("WinRankView", function()
-    return display.newNode()
+    local node = display.newNode()
+    node:setNodeEventEnabled(true)
+    require(cc.PACKAGE_NAME .. ".api.EventProtocol").extend(node)
+    return node
 end)
 
 function WinRankView:getRankList()
@@ -17,14 +20,13 @@ function WinRankView:getRankList()
     }
 end
 function WinRankView:ctor()
-
-	local modalLayer = CommonModalView.new(true, "#floatbg_gold.png")
+	self.modalLayer = app:createView("CommonModalView")
 	local rankList = nil
 
-	httpClient.new(function(result)
-					rankList = result
-					end,
-					getUrl(PRIZE_LIST_URL)):start()
+	HttpClient.new(function(result)
+		rankList = result
+	end,
+	getUrl(PRIZE_LIST_URL)):start()
 
     if rankList == nil then
         rankList = self:getRankList()
@@ -38,14 +40,25 @@ function WinRankView:ctor()
 
 		--rank bg
 		local rankBg = display.newSprite("#rank_".. i ..".png")
-		modalLayer:addContentChild(rankBg, startX, startY - i * 80, display.CENTER_LEFT)
+		self.modalLayer:addContentChild(rankBg, startX, startY - i * 80, display.CENTER_LEFT)
 
 		--detail
 		local rankLabel = ui.newTTFLabel({text = rank.nickName .. "  " .. rank.rmb, size = 28, color = ccc3(95, 41, 0)})
-		modalLayer:addContentChild(rankLabel, startX + 60, startY - i * 80, display.CENTER_LEFT)
+		self.modalLayer:addContentChild(rankLabel, startX + 60, startY - i * 80, display.CENTER_LEFT)
 	end
 
-	self:addChild(modalLayer:getView())
+	--onclose
+    self.modalLayer:addEventListener("onClose", handler(self, self.onClose))
+
+	self:addChild(self.modalLayer:getView())
+end
+
+function WinRankView:onClose()
+    self:dispatchEvent({name = "onClose"})
+end
+
+function WinRankView:onEnter()
+	
 end
 
 return WinRankView
