@@ -1,8 +1,8 @@
--- global variable sockettcp
-import("..MessageCenter").new()
 
 local CommonBackground = import("..views.CommonBackground")
 local SettingMenu = import("..views.SettingMenu")
+local HttpClient = import("..HttpClient")
+local MessageCenter = import("..MessageCenter")
 
 local ChooseLevelScene = class("ChooseLevelScene",function ()
 	return display.newScene("ChooseLevelScene")
@@ -13,10 +13,6 @@ function ChooseLevelScene:ctor()
 	local LEVEL_OFFSET_X = 225
 	local LEVEL_OFFSET_Y = 50
 	local scale_rate = 1.1
-
-	cc.EventProxy.new(sockettcp , self)
-	:addEventListener("ON_ENTER_ROOM",self.onEnterRoom,self)
-
 	local experience = app.me.experience or 0 
 
 	CommonBackground.new():addTo(self)
@@ -26,9 +22,10 @@ function ChooseLevelScene:ctor()
     		pressed = "#xiangshi.png",
     		disabled = "#xiangshi.png"
 		})
-		:onButtonClicked(function(e) 
-				app:enterChooseAward(1)
-			end)
+		:onButtonClicked(function(e)
+			audio.playSound(GAME_SOUND["tapButton"]) 
+			app:enterChooseAward(1)
+		end)
 		:onButtonPressed(function (e) 
 			 e.target:setScale(scale_rate)
 		end)
@@ -45,8 +42,9 @@ function ChooseLevelScene:ctor()
     		disabled = "#huishi_lock.png"
 		})
 		:onButtonClicked(function(e) 
+			audio.playSound(GAME_SOUND["tapButton"])
 			app:enterChooseAward(2)
-			end)
+		end)
 		:onButtonPressed(function (e) 
 			 e.target:setScale(scale_rate)
 		end)
@@ -63,8 +61,9 @@ function ChooseLevelScene:ctor()
     		disabled = "#dianshi_lock.png"
 		})
 		:onButtonClicked(function(e) 
+			audio.playSound(GAME_SOUND["tapButton"])
 			app:enterChooseAward(3)
-			end)
+		end)
 		:onButtonPressed(function (e) 
 			 e.target:setScale(scale_rate)
 		end)
