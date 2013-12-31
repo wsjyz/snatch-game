@@ -19,7 +19,13 @@ function RoomListScene:ctor(level)
 	settingMenu:addEventListener("goBack", function() 
 		app:enterChooseLevel()
 	end)
-	
+	settingMenu:addEventListener("onPopup", function() 
+		self.roomlistView:setTouchEnabled(false)
+	end)
+	settingMenu:addEventListener("onPopupClose", function() 
+		self.roomlistView:setTouchEnabled(true)
+	end)
+		
 	--quick start
 	cc.ui.UIPushButton.new({
 		normal = "#startbtn.png",
@@ -32,10 +38,29 @@ function RoomListScene:ctor(level)
 	:align(display.CENTER, display.cx, display.cy + 200)
 	:addTo(self)
 
+end
+
+function RoomListScene:quickStart()
+	if self.roomlist then
+		local randomRoom = self.roomlist[math.random(1,table.nums(self.roomlist))]
+		self:enterRoom(randomRoom)
+	end	
+end
+
+function RoomListScene:enterRoom(award)
+	if not sockettcp then app:initSocket() end
+	app.currentAward = award
+	local data = clone(app.me)
+	data.awardId = award.awardId
+
 	sockettcp:addEventListener("ON_ENTER_ROOM", handler(self, self.onEnterRoom))
+
+	printf("enterRoom send data %s", json.encode(data))
+	sockettcp:sendMessage(ENTER_ROOM_SERVICE, data)
 
 end
 
+--event
 
 function RoomListScene:onEnter()
 	--http get award list
@@ -57,23 +82,6 @@ function RoomListScene:onEnter()
 	:start()
 end
 
-function RoomListScene:quickStart()
-	if self.roomlist then
-		local randomRoom = self.roomlist[math.random(1,table.nums(self.roomlist))]
-		self:enterRoom(randomRoom)
-	end	
-end
-
-function RoomListScene:enterRoom(award)
-	app.currentAward = award
-	local data = clone(app.me)
-	data.awardId = award.awardId
-
-	printf("enterRoom send data %s", json.encode(data))
-	sockettcp:sendMessage(ENTER_ROOM_SERVICE, data)
-end
-
---event
 function RoomListScene:onEnterRoom(event)
 	local players = event.data
 	printf("onEnterRoom response data %s", json.encode(players))
@@ -98,7 +106,7 @@ function RoomListScene:onTapRoomIcon(event)
 		disabled = "#faststartbtn_active.png"
 	})
 	:onButtonClicked(function(e) 
-		self:enterRoom(award.awardId)
+		self:enterRoom(award)
 	end)
 	modalLayer:addContentChild(quickStart, display.cx - 5, display.cy - 120, display.CENTER_RIGHT)
 
@@ -119,6 +127,10 @@ function RoomListScene:onTapRoomIcon(event)
 		self.roomlistView:setTouchEnabled(true)
 	end)
 
+end
+
+function RoomListScene:onExit()
+	sockettcp:removeAllEventListenersForEvent("ON_ENTER_ROOM")
 end
 
 return RoomListScene
