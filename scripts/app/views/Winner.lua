@@ -38,7 +38,6 @@ function Winner:ctor(winner)
 end
 
 function Winner:onClose()
-	self.modalLayer:close()
 	self:dispatchEvent({name = "onClose"})
 end
 
