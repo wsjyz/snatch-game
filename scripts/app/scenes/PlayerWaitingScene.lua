@@ -75,11 +75,15 @@ function PlayerWaitingScene:leftRoom()
 	data.seatNo = self.mySeat
 
 	printf("user left room ,send data %s", json.encode(data))
-	sockettcp:sendMessage("LEFT_ROOM_SERVICE", data)
+	sockettcp:sendMessage(LEFT_ROOM_SERVICE, data)
+	app:enterChooseAward(app.currentLevel)
 end
 
 function PlayerWaitingScene:onOtherPlayerComeIn(player)
-	if player.playerId == app.me.playerId then self.mySeat = player.setNo end
+	if player.playerId == app.me.playerId then 
+		printf("my seat no %d", player.seatNo )
+		self.mySeat = player.seatNo 
+	end
 
 	local seatNo = ( player.seatNo or 0 ) + 1
 	local x,y = seatPositons[seatNo].x,seatPositons[seatNo].y
