@@ -36,19 +36,20 @@ MessageCenter.SERVICES = {
 	"playerService.answerQuestion"  --ANSWER_SERVICE
 }
 
-
-function MessageCenter:ctor()
+function MessageCenter:ctor(host,port)
 	--support event
 	cc.GameObject.extend(self)
     self:addComponent("components.behavior.EventProtocol"):exportMethods()
     --todo http way get host & port
     if not self.socket_ then
-		self.socket_ = SocketTCP.new("127.0.0.1",9110,true)
+    	self.host = host
+    	self.port = port
+		self.socket_ = SocketTCP.new(self.host,self.port,true)
 		--add event
-		self.socket_:addEventListener(SocketTCP.EVENT_CONNECTED, handler(self, self.onStatus))
+		self.socket_:addEventListener(SocketTCP.EVENT_CONNECTED, handler(self, self.onConnected))
 		self.socket_:addEventListener(SocketTCP.EVENT_CLOSE, handler(self,self.onStatus))
 		self.socket_:addEventListener(SocketTCP.EVENT_CLOSED, handler(self,self.onStatus))
-		self.socket_:addEventListener(SocketTCP.EVENT_CONNECT_FAILURE, handler(self,self.onStatus))
+		self.socket_:addEventListener(SocketTCP.EVENT_CONNECT_FAILURE, handler(self,self.onConnectedFailure))
 		self.socket_:addEventListener(SocketTCP.EVENT_DATA, handler(self,self.onData))
 	end
 
@@ -57,14 +58,32 @@ function MessageCenter:ctor()
 	end
 	--set global
 	sockettcp = self
+	-- some jobs may be execute after connection
+	self.jobs = {}
 end
 
 function MessageCenter:isConnected()
 	return self.socket_.isConnected
 end
 
+function MessageCenter:onConnected()
+	printf("socket connected , start to proccess jobs")
+	if self.jobs then
+		for k,job in pairs(self.jobs) do
+			printf("proccess job %s", k)
+			coroutine.resume(job)
+		end
+	end
+end
+
 function MessageCenter:onStatus(__event)
 	echoInfo("socket status: %s", __event.name)
+end
+
+function MessageCenter:onConnectedFailure()
+	device.showAlert("提示", string.format("无法连接到服务器%s:%d", self.host,self.port), {"取消","重试"},function(event) 
+ 		if event.buttonIndex == 1002 then self.socket_:connect() end
+	end)
 end
 
 function MessageCenter:onData(__event)
@@ -87,6 +106,18 @@ end
 --serviceCode  values must be one of MessageCenter.ENTER_ROOM_SERVICE,MessageCenter.LEFT_ROOM_SERVICE etc.
 --data to be send to server
 function MessageCenter:sendMessage(serviceCode,data)
+	if self:isConnected() then 
+		self:sendMessage_(serviceCode, data) 
+	else 
+		local co = coroutine.create(function(e) 
+			self:sendMessage_(serviceCode, data) 
+			self.jobs[serviceCode] = nil
+		end)
+		self.jobs[serviceCode] = co
+	end
+end
+
+function MessageCenter:sendMessage_(serviceCode, data)
 	assert(type(serviceCode) == "number","Invalid type, must be number")
 	assert(type(data) == "table","Invalid type,must be table")
 
@@ -102,7 +133,6 @@ function MessageCenter:sendMessage(serviceCode,data)
 	_ba:writeStringBytes(dataJson)
 
 	self.socket_:send(_ba:getPack())
-
 end
 
 function MessageCenter:getServiceName_(serviceCode)
@@ -111,6 +141,11 @@ function MessageCenter:getServiceName_(serviceCode)
 		echoError("Can not find corresponding service by code %d", serviceCode)
 	end
 	return string.format("%30s", name)
+end
+
+function MessageCenter:disconnect()
+	self.socket_:disconnect()
+	sockettcp = nil
 end
 
 

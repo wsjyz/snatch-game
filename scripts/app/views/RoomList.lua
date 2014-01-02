@@ -28,7 +28,6 @@ function RoomList:ctor(rect,roomlist)
     	if #cellRoomList > 0 then
     		--add room list cel
     		local cell = RoomListCell.new(rect.size,cellRoomList)
-
     		cell:addEventListener("onTapRoomIcon", handler(self, self.onTapRoomIcon))
     		self:addCell(cell)
     	end
@@ -39,7 +38,6 @@ function RoomList:ctor(rect,roomlist)
     local x = (self:getClippingRect().size.width - RoomList.INDICATOR_MARGIN * (numPages - 1)) / 2 + 20 
     local y = self:getClippingRect().origin.y + 80  
 
-    printf("indicator x : %d , y : %d", x,y)
     self.indicator_ = display.newSprite("#cell_selected.png")
     self.indicator_:setPosition(x, y)
     self.indicator_.firstX_ = x

@@ -15,13 +15,19 @@ function Lottery:ctor()
 	self.modalLayer = app:createView("CommonModalView", false)
 
 	--add content
-	local chest1 = display.newSprite("#chest1.png")
-	local chest_green = display.newSprite("#chest_green.png")
-	local chest_red = display.newSprite("#chest_red")
+	local chest1 = cc.ui.UIPushButton.new("#chest1.png"):onButtonClicked(function(e) 
+		self:onChestClick()
+	end)
+	local chest_green = cc.ui.UIPushButton.new("#chest_green.png"):onButtonClicked(function(e) 
+		self:onChestClick()
+	end)
+	local chest_red = cc.ui.UIPushButton.new("#chest_red.png"):onButtonClicked(function(e) 
+		self:onChestClick()
+	end)
 
 	self.modalLayer:addContentChild(chest1, display.cx - 150, display.cy)
 	self.modalLayer:addContentChild(chest_green, display.cx, display.cy)
-	self.modalLayer:addContentChild(chest_red, display.cx, display.cy)
+	self.modalLayer:addContentChild(chest_red, display.cx + 150, display.cy)
 
 	self:addChild(self.modalLayer:getView())
 end
@@ -36,6 +42,7 @@ function Lottery:onChestClick()
 			self:dispatchEvent({name = "onFailed"})
 		end
 	 end, getUrl(LOTTERY_URL, app.currentRoomId,app.me.playerId))
+	:start()
 end
 
 return Lottery

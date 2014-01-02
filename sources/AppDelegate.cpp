@@ -5,6 +5,7 @@
 #include "support/CCNotificationCenter.h"
 #include "CCLuaEngine.h"
 #include <string>
+#include "C2DXShareSDK.h"
 
 using namespace std;
 using namespace cocos2d;
@@ -24,6 +25,14 @@ AppDelegate::~AppDelegate()
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
+    cn::sharesdk::C2DXShareSDK::open(CCString::create("102917b91a3a"), false);
+    
+    CCDictionary *sinaConfigDict = CCDictionary::create();
+    sinaConfigDict -> setObject(CCString::create("568898243"), "app_key");
+    sinaConfigDict -> setObject(CCString::create("38a4f8204cc784f81f9f0daaf31e02e3"), "app_secret");
+    sinaConfigDict -> setObject(CCString::create("http://www.sharesdk.cn"), "redirect_uri");
+    cn::sharesdk::C2DXShareSDK::setPlatformConfig(cn::sharesdk::C2DXPlatTypeSinaWeibo, sinaConfigDict);
+    
     // initialize director
     CCDirector *pDirector = CCDirector::sharedDirector();
     pDirector->setOpenGLView(CCEGLView::sharedOpenGLView());

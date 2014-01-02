@@ -27,6 +27,9 @@
 #import "EAGLView.h"
 #import "AppDelegate.h"
 #import "RootViewController.h"
+#import <ShareSDK/ShareSDK.h>
+#import "WXApi.h"      //微信
+#import "WeiboApi.h"   //腾讯微博
 
 @implementation AppController
 
@@ -39,6 +42,16 @@ static AppDelegate s_sharedApplication;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
 
+    // import sns libs
+    
+    //导入微信类型
+    [ShareSDK importWeChatClass:[WXApi class]];
+    
+    //导入腾讯微博类型
+    [ShareSDK importTencentWeiboClass:[WeiboApi class]];
+    
+    [ShareSDK connectSinaWeiboWithAppKey:@"175861371" appSecret:@"0e0ea823b519147ff1a5a77372bf21e4" redirectUri:@"http://appgo.cn"];
+    
     // Add the view controller's view to the window and display.
     window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
     EAGLView *__glView = [EAGLView viewWithFrame: [window bounds]
@@ -104,6 +117,16 @@ static AppDelegate s_sharedApplication;
      Called when the application is about to terminate.
      See also applicationDidEnterBackground:.
      */
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+    return [ShareSDK handleOpenURL:url sourceApplication:nil annotation:nil wxDelegate:nil];
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    return [ShareSDK handleOpenURL:url sourceApplication:sourceApplication annotation:annotation wxDelegate:nil];
 }
 
 #pragma mark -

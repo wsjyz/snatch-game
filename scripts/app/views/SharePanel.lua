@@ -27,10 +27,10 @@ function SharePanel:ctor()
 		printf("share from pengyou")
 		end)
 
-	self.modalLayer:addContentChild(wechat, display.cx - padding * 2 , display.cy)
+	self.modalLayer:addContentChild(wechat, display.cx - padding * 3 , display.cy)
 	self.modalLayer:addContentChild(sina, display.cx - padding, display.cy)
 	self.modalLayer:addContentChild(txweibo, display.cx + padding, display.cy)
-	self:modalLayer:addContentChild(pengyou, display.cx + padding * 2, display.cy)
+	self:modalLayer:addContentChild(pengyou, display.cx + padding * 3, display.cy)
 
 	self:addChild(self.modalLayer:getView())
 end
