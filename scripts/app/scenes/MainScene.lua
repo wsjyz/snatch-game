@@ -26,8 +26,7 @@ end
 
 function MainScene:checkPlayer()
     HttpClient.new(function(player) 
-        printf("player %s", json.encode(player))
-        if player then
+        if type(player) == "table" then
             app.me = player
             app:enterChooseLevel()
         else
@@ -35,7 +34,7 @@ function MainScene:checkPlayer()
             app:createView("LoginForm"):addTo(self,1)
         end
     end,getUrl(PLAYER_INFO_URL, math.random(1,100)))    
-    --end,getUrl(PLAYER_INFO_URL, device.getOpenUDID()))
+    -- end,getUrl(PLAYER_INFO_URL, device.getOpenUDID()))
     :start()
 end
 
