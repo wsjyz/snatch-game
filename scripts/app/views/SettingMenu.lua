@@ -3,9 +3,7 @@
 -- Date: 2013-12-08 17:07:33
 --
 
-local winRankView = import(".WinRankView")
-local profileCenterView = import(".ProfileCenterView")
-
+local sharedDirector = CCDirector:sharedDirector()
 local SettingMenu = class("SettingMenu",function()
 	local node = display.newNode()
 	node:setNodeEventEnabled(true)
@@ -61,6 +59,7 @@ function SettingMenu:ctor(x,y)
     		disabled = "#setbtn_activ.png"
 		})
 	:onButtonClicked(function(event) 
+		audio.playSound(GAME_SOUND["tapButton"])
 		local children = self:getChildren()
 		for i=0,children:count() - 1 do
 			local child = children:objectAtIndex(i)
@@ -77,17 +76,36 @@ function SettingMenu:ctor(x,y)
 end
 
 function SettingMenu:goBack_(event)
+	audio.playSound(GAME_SOUND["tapBack"])
 	self:dispatchEvent({name = "goBack"})
 end
 
 function SettingMenu:showRank_(event)
-	-- app:enterWinRankScene()
-	winRankView.new():addTo(self)
+	audio.playSound(GAME_SOUND["popup"])
+	local rankview = app:createView("WinRankView")
+	rankview:addEventListener("onClose", handler(self, self.onPopupClose))
+	if sharedDirector:getRunningScene() then
+		rankview:addTo(sharedDirector:getRunningScene(),3)
+	else
+		rankview:addTo(self,3)
+	end
+	self:dispatchEvent({name = "onPopup"})
 end
 
 function SettingMenu:userInfo_(event)
-	--app:enterProfileCenter()
-	profileCenterView.new():addTo(self)
+	audio.playSound(GAME_SOUND["popup"])
+	local profileview = app:createView("ProfileCenterView")
+	profileview:addEventListener("onClose", handler(self, self.onPopupClose))
+	if sharedDirector:getRunningScene() then
+		profileview:addTo(sharedDirector:getRunningScene(),3)
+	else
+		profileview:addTo(self,3)
+	end
+	self:dispatchEvent({name = "onPopup"})
+end
+
+function SettingMenu:onPopupClose()
+	self:dispatchEvent({name = "onPopupClose"})
 end
 
 function SettingMenu:volumeControl_(event)
