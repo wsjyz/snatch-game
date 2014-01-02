@@ -43,6 +43,7 @@ function HttpClient:onResponse(event)
         else
             echoInfo("REQUEST   getResponseDataLength() = %d", request:getResponseDataLength())
             local result = (self.contentType == "json" and json.decode(request:getResponseString())) or request:getResponseData()
+            printf("result type %s , contentType %s", type(result),self.contentType)
             self.listener(result)
         end
     else
