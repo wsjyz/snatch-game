@@ -35,13 +35,13 @@ end
 function Lottery:onChestClick()
 	HttpClient.new(function(result)
 		self.modalLayer:close()
-		printf("lottery result %s", result)
-		if result then
+		printf("lottery result %s, type %s", result, type(result))
+		if type(result) == "boolean" and result == true then
 			self:dispatchEvent({name = "onSuccess"})
 		else
 			self:dispatchEvent({name = "onFailed"})
 		end
-	 end, getUrl(LOTTERY_URL, app.currentRoomId,app.me.playerId))
+	 end, getUrl(LOTTERY_URL, app.currentAward.awardId,app.me.playerId))
 	:start()
 end
 

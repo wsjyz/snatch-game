@@ -7,6 +7,8 @@ local PlayerView = class("PlayerView", function()
 end)
 
 function PlayerView:ctor(player)
+	assert(type(player) == "table" ,"player must be table")
+	
 	local seatNo = ( player.seatNo or 0 ) +1
 	local thumbnail = (player.male == 1 and "#male.png") or "#female.png"
 	local nickName = player.nickName

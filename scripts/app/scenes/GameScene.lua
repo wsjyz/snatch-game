@@ -62,7 +62,6 @@ function GameScene:ctor(players)
 			on = "#answer_active.png"
 		})
 		:onButtonClicked(function(e)
-			--todo answer
 			self:answer(e.target)
 		 end)
 		:align(display.CENTER, x, y)
@@ -116,6 +115,8 @@ function GameScene:resetView()
 		end
 		self.answerMarks = {}
 	end
+
+	self:setItemSelected(false)
 end
 
 function GameScene:showTopic()
@@ -138,15 +139,17 @@ function GameScene:showTopic()
 	:align(display.TOP_LEFT, titleLabelX, titleLabelY)
 	:addTo(self)
 
-	--printf("titleLabel position x : %d, y : %d", self.titleLabel:getPositionX(),self.titleLabel:getPositionY())
 	--setup item label and answer mark
-	for index,item in ipairs(topic.options) do
+	for _,item in ipairs(topic.options) do
+		local index = item.index
 		local container = self.itemContainers[index]
 		local itemLabel = ui.newTTFLabel({	
 			text = item.content
 		})
 		container.rightAnswer = item.right
 		container:setButtonLabel("off", itemLabel)
+		container:setButtonLabelAlignment(display.LEFT_CENTER)
+		container:setButtonLabelOffset(-140, 0)
 		container:setButtonEnabled(self:isMyTurn_())
 
 		if item.right == 1 then self.rightAnswerIndex = index end
@@ -175,6 +178,14 @@ function GameScene:setItemEnabled(enabled)
 	end
 end
 
+function GameScene:setItemSelected(selected)
+	if self.itemContainers then
+		for _,item in ipairs(self.itemContainers) do
+			item:setButtonSelected(selected)
+		end
+	end
+end
+
 function GameScene:answer(item)
 	--check can answer
 	if self:isMyTurn_() then
@@ -192,10 +203,11 @@ function GameScene:answer(item)
 		self:markAnswer(item)
 
 		local data = {
+			playerId = app.me.playerId,
 			roomId = app.currentRoomId,
 			optionIndex = item.itemIndex
 		}
-		printf("%s selected answer : %d ,send data : \n %s", self.host.nickName ,item.itemIndex,json.encode(data))
+		printf("%s selected answer : %d ,send data : \n %s", self.host.nickName, item.itemIndex, json.encode(data))
 		
 		--add score
 		self.score = self.score + item.rightAnswer
@@ -206,6 +218,7 @@ end
 
 function GameScene:markAnswer(item)
 	self.answerMarks[item.itemIndex]:show()
+	item:setButtonSelected(true)
 	if item.rightAnswer == 0 then
 		self.answerMarks[self.rightAnswerIndex]:show()
 	end
@@ -223,15 +236,56 @@ function GameScene:changeTurns()
 end
 
 --event listener
-function GameScene:onAnswerComplete(data)
+function GameScene:onAnswerComplete(event)
+	local data = event.data
+	printf("onAnswerComplete received data %s", json.encode(data))
 	local selectedItem = self.itemContainers[data.optionIndex]
 	if not self:isMyTurn_() then -- avoid duplicate render
+		if self.isHostTurn == true then
+			self.hostCountdown:pause()
+		else
+			self.guestCountdown:pause()
+		end
 		self:markAnswer(selectedItem)
+	end
+
+	local gameOver = function() 
+		--no more players ,game over
+		local winner = (self.isHostTurn and self.guest) or self.host
+		local winnerView = app:createView("Winner", winner):addTo(self)
+		winnerView:addEventListener("onClose", function() 
+			local winnerIsMe = winner.playerId == app.me.playerId
+			if winnerIsMe then
+				local lottery = app:createView("Lottery"):addTo(self) -- 抽奖
+				lottery:addEventListener("onSuccess",function()
+					--抽奖成功
+					local treasure = app:createView("Treasure"):addTo(self)
+					treasure:addEventListener("onClose",function()
+						-- todo
+						local shareInfo = app:createView("ShareInfo", app.currentAward):addTo(self)
+						shareInfo:addEventListener("onShare", function(e)
+							app:createView("SharePanel")
+						end)
+					end)
+				end)
+				lottery:addEventListener("onFailed", function()
+					--抽奖失败
+					local lotteryFaild = app:createView("LotteryFailed"):addTo(self)
+					lotteryFaild:addEventListener("onClose",function(e)
+						app:enterChooseAward(app.currentLevel)		 
+					end)
+				end)
+			else
+				app:enterChooseAward(app.currentLevel)
+			end
+		end)
 	end
 		
 	--delay for next topic
 	scheduler.performWithDelayGlobal(function() 
 		if selectedItem.rightAnswer == 0 then -- wrong
+			--ChallengeOver view
+
 			if self.nextPlayerIndex <= table.nums(self.players) then
 				if self.isHostTurn then 
 					self:setHost(self.players[self.nextPlayerIndex]) 
@@ -240,35 +294,7 @@ function GameScene:onAnswerComplete(data)
 				end
 				self.nextPlayerIndex = self.nextPlayerIndex + 1
 			else
-				--no more players ,game over
-				local winner = (self.isHostTurn and self.guest) or self.host
-				local winnerView = app:createView("Winner", winner):addTo(self)
-				winnerView:addEventListener("onClose", function() 
-					local winnerIsMe = winner.playerId == app.me.playerId
-					if winnerIsMe then
-						local lottery = app:createView("Lottery"):addTo(self) -- 抽奖
-						lottery:addEventListener("onSuccess",function()
-							--抽奖成功
-							local treasure = app:createView("Treasure"):addTo(self)
-							treasure:addEventListener("onClose",function()
-								-- todo
-								local shareInfo = app:createView("ShareInfo", app.currentAward):addTo(self)
-								shareInfo:addEventListener("onShare", function(e)
-									app:createView("SharePanel")
-								end)
-							end)
-						end)
-						lottery:addEventListener("onFailed", function()
-							--抽奖失败
-							local lotteryFaild = app:createView("LotteryFailed"):addTo(self)
-							lotteryFaild:addEventListener("onClose",function(e)
-								app:enterChooseAward(app.currentLevel)		 
-							end)
-						end)
-					else
-						app:enterChooseAward(app.currentLevel)
-					end
-				end)
+				gameOver()
 			end
 		end
 		--next topic

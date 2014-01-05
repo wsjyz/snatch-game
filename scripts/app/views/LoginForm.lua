@@ -21,7 +21,9 @@ LoginForm.RADIO_BUTTON_IMAGES = {
     on_disabled = "#radio_on.png"
 }
 
-function LoginForm:ctor()
+function LoginForm:ctor(playerId)
+	self.playerId = playerId
+
 	cc.GameObject.extend(self):addComponent("components.behavior.EventProtocol"):exportMethods()	
 	--add bg
 	local bg = display.newSprite("#loginbg.png", display.cx, display.cy - 50):addTo(self)
@@ -109,7 +111,7 @@ function LoginForm:register()
 	end
 
 	local postData = {
-			playerId = device.getOpenUDID(),
+			playerId = self.playerId,
 			nickName = loginName,
 			male = self.male
 		}

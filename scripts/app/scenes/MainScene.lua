@@ -25,17 +25,19 @@ function MainScene:ctor()
 end
 
 function MainScene:checkPlayer()
+    local playerId = "player" .. math.random(1,10)
+    -- local playerId = device.getOpenUDID()
     HttpClient.new(function(player) 
         if type(player) == "table" then
             app.me = player
             app:enterChooseLevel()
         else
             self.startBtn:removeSelf(true)
-            app:createView("LoginForm"):addTo(self,1)
+            app:createView("LoginForm", playerId):addTo(self,1)
         end
-    end,getUrl(PLAYER_INFO_URL, math.random(1,100)))    
-    -- end,getUrl(PLAYER_INFO_URL, device.getOpenUDID()))
+    end,getUrl(PLAYER_INFO_URL, playerId))    
     :start()
+   
 end
 
 function MainScene:onEnter()

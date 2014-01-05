@@ -54,9 +54,8 @@ function CommonModalView:ctor(needCloseBtn,bgPng)
 end
 
 function CommonModalView:addContentChild(node,x,y,align)
-	local pos = node:getPosition() or CCPoint(0, 0)
-	local x = x or pos.x
-	local y = y or pos.y
+	local x = x or node:getPositionX()
+	local y = y or node:getPositionY()
 	local align_ = align or display.CENTER
 	node:align(align_, x, y):addTo(self.view,ZORDER)
 end

@@ -15,7 +15,7 @@ TOPIC_LIST_URL="/topic/random/%d" --level
 HALL_INFO_URL = "/hall/get"
 --award
 AWARD_LIST_URL = "/award/list/%d" --level
-LOTTERY_URL = "/award/win/%s/%s" --roomId,playerId
+LOTTERY_URL = "/award/win/%s/%s" --awardId,playerId
 PRIZE_LIST_URL = "/award/get-player-prize-list"
 
 function getUrl(pattern, ...)

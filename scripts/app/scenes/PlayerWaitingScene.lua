@@ -39,8 +39,7 @@ function PlayerWaitingScene:ctor(players)
 	self.timerPlaceHolder = display.newSprite("#countdown_ring.png",display.cx,display.cy):hide():addTo(self,1)
 	-- animation
 	self.initCountdown = display.newSprite(string.format("#timer_%d.png", 5), display.cx, display.cy):hide():addTo(self,1)
-	local countdownFrames = display.newFrames("timer_%0d.png",1,5,true)
-	self.countdownAnimation = display.newAnimation(countdownFrames, 1.0)
+	
 	--seats
 	self.seats = {}
 
@@ -63,10 +62,23 @@ function PlayerWaitingScene:ctor(players)
 
 		--init player
 	for index, player in ipairs(players) do
-		local canStart = self:onOtherPlayerComeIn(player)
+		local event = {}
+		event.data = player
+		local canStart = self:onOtherPlayerComeIn(event)
 		if canStart then break end
 	end
 
+end
+
+function PlayerWaitingScene:getCountdownAnimation()
+	local animation = display.getAnimationCache("countdown")
+	if not animation then
+		local countdownFrames = display.newFrames("timer_%0d.png",1,5,true)
+		animation = display.newAnimation(countdownFrames, 1.0)
+		display.setAnimationCache("countdown", animation)
+	end
+
+	return animation
 end
 
 function PlayerWaitingScene:leftRoom()
@@ -79,34 +91,39 @@ function PlayerWaitingScene:leftRoom()
 	app:enterChooseAward(app.currentLevel)
 end
 
-function PlayerWaitingScene:onOtherPlayerComeIn(player)
+function PlayerWaitingScene:onOtherPlayerComeIn(event)
+	local player = event.data
 	if player.playerId == app.me.playerId then 
 		printf("my seat no %d", player.seatNo )
 		self.mySeat = player.seatNo 
 	end
 
+	printf("onOtherPlayerComeIn , player %s", json.encode(player))
 	local seatNo = ( player.seatNo or 0 ) + 1
-	local x,y = seatPositons[seatNo].x,seatPositons[seatNo].y
-	
-	local seat = app:createView("PlayerView", player)
-	:imgPos(x, y - 20)
-	:labelPos(playerNameSetting[seatNo].align, playerNameSetting[seatNo].pos)
-	:addTo(self)
+	self.players[seatNo] = player
+	if not self.seats["seat_" .. seatNo] then
+		local x,y = seatPositons[seatNo].x,seatPositons[seatNo].y
+		local seat = app:createView("PlayerView", player):addTo(self)
+		seat:imgPos(x, y - 20)
+		seat:labelPos(playerNameSetting[seatNo].align, playerNameSetting[seatNo].pos)
 
-	self.seats["seat_" .. seatNo] = seat
-
+		self.seats["seat_" .. seatNo] = seat
+	end
 	return self:checkGameStart()
 	
 end
 
-function PlayerWaitingScene:onOtherPlayerLeft(player)
+function PlayerWaitingScene:onOtherPlayerLeft(event)
 	printf("onOtherPlayerLeft called")
+	local player = event.data
 	local seatNo = ( player.seatNo or 0 ) + 1
 	local seat = self.seats["seat_" .. seatNo]
 	if seat then
 		seat.removeFromParent()
 		self.seats["seat_" .. seatNo] = nil
+		self.players[seatNo] = nil
 	end
+
 
 end
 
@@ -114,8 +131,10 @@ function PlayerWaitingScene:checkGameStart()
 	if table.nums(self.seats) == 2 then
 		self.timerPlaceHolder:show() 
 		self.initCountdown:show()
+		self.settingMenu:hide()
 		--player animation for start
-		self.initCountdown:playAnimationOnce(self.countdownAnimation, false, function() 
+		local animation = self:getCountdownAnimation()
+		self.initCountdown:playAnimationOnce(animation, false, function() 
 			app:loadTopicList(function() 
 				display.replaceScene(GameScene.new(self.players))
 			end)
