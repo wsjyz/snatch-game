@@ -12,8 +12,8 @@ end)
 function Treasure:ctor()
 	self.modalLayer = app:createView("CommonModalView",false)
 
-	local treasure = display.newSprite("#chest")
-	self.modalLayer:addContentChild(treasure)
+	local treasure = display.newSprite("#chest.png")
+	self.modalLayer:addContentChild(treasure,display.cx,display.cy)
 
 	self.modalLayer:addEventListener("onBackgroudTap", handler(self, self.onClose))
 
@@ -22,8 +22,8 @@ function Treasure:ctor()
 end
 
 function Treasure:onClose()
-	self.modalLayer:close()
 	self:dispatchEvent({name = "onClose"})
+	self:removeSelf(true)
 end
 
 return Treasure

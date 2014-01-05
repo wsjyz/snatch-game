@@ -26,7 +26,7 @@ function Winner:ctor(winner)
 		})
 	self.modalLayer:addContentChild(winnerLabel, startX, display.cy, display.LEFT_CENTER)
 	
-	startX = startX + gongxiLabel:winnerLabel().width
+	startX = startX + winnerLabel:getContentSize().width
 	-- other text
 	local otherLabel =ui.newTTFLabel({
 		text = "成为擂主"
@@ -39,6 +39,7 @@ end
 
 function Winner:onClose()
 	self:dispatchEvent({name = "onClose"})
+	self:removeSelf(true)
 end
 
 return Winner

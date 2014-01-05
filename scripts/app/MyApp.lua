@@ -40,9 +40,10 @@ end
 
 function MyApp:loadTopicList(callback)
     HttpClient.new(function(topicList) 
-        printf("load topicList ,as follows : %s", json.encode(topicList))
         self.topicList = topicList
-        if callback then callback() end
+        if callback and type(callback) == "function" then
+            callback() 
+         end
     end ,getUrl(TOPIC_LIST_URL, self.currentLevel)):start()
 end
 
