@@ -27,13 +27,15 @@ ENTER_ROOM_SERVICE = 1
 LEFT_ROOM_SERVICE = 2
 ON_READY_SERVICE = 3
 ANSWER_SERVICE = 4
+WIN_GAME_SERVICE = 5
 
 --具体的服务接口，保持与上面定义的SERVICE的顺序一致
 MessageCenter.SERVICES = {
 	"playerService.enterRoom", --ENTER_ROOM_SERVICE 
 	"playerService.leftRoom",	--LEFT_ROOM_SERVICE
 	"playerService.playerReady", --ON_READY_SERVICE
-	"playerService.answerQuestion"  --ANSWER_SERVICE
+	"answerService.answerQuestion",  --ANSWER_SERVICE
+	"answerService.winGame", -- WIN_GAME_SERVICE
 }
 
 function MessageCenter:ctor(host,port)
