@@ -30,9 +30,9 @@ function ShareInfo:ctor(award)
 	})
 
 	local shareBtn = cc.ui.UIPushButton.new({
-		normal = "#sharebtn.png",
-		pressed = "#sharebtn_active.png",
-		disabled = "#sharebtn.png"
+		normal = "#sharetbn.png",
+		pressed = "#sharetbn_active.png",
+		disabled = "#sharetbn.png"
 	})
 	:onButtonClicked(function(e)
 		self.modalLayer:close()
@@ -40,11 +40,11 @@ function ShareInfo:ctor(award)
 	end)
 
 	--add to modalLayer
-	self.modalLayer:addContentChild(title, display.cx - bgOffsetX + 30, display.cy + bgOffsetY, display.LEFT_CENTER)
-	self.modalLayer:addContentChild(content, display.cx - bgOffsetX + 30, display.cy + 10, display.LEFT_CENTER)
-	self.modalLayer:addContentChild(tail, display.cx + bgOffsetX - 30, display.cy - 10, display.RIGHT_CENTER)
+	self.modalLayer:addContentChild(title, display.cx - bgOffsetX + 100, display.cy + 60, display.LEFT_CENTER)
+	self.modalLayer:addContentChild(content, display.cx - bgOffsetX + 100, display.cy + 10, display.LEFT_CENTER)
+	self.modalLayer:addContentChild(tail, display.cx + bgOffsetX - 100, display.cy - 50, display.RIGHT_CENTER)
 
-	self.modalLayer:addContentChild(shareBtn, display.cx, display.cy - 40)
+	self.modalLayer:addContentChild(shareBtn, display.cx, display.cy - 100)
 
 	self:addChild(self.modalLayer:getView())
 	

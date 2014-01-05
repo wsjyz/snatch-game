@@ -20,7 +20,7 @@ function LotteryFailed:ctor()
 	})
 
 	local content = ui.newTTFLabel({
-		text = "卿天赋异禀，但资历尚浅，需再接再厉",
+		text = "卿天赋异禀，但资历尚浅，\n需再接再厉！",
 		color = ccc3(187,67,23)
 	})
 
@@ -30,9 +30,9 @@ function LotteryFailed:ctor()
 	})
 
 	--add to modalLayer
-	self.modalLayer:addContentChild(title, display.cx - bgOffsetX + 30, display.cy + bgOffsetY, display.LEFT_CENTER)
-	self.modalLayer:addContentChild(content, display.cx - bgOffsetX + 30, display.cy + 10, display.LEFT_CENTER)
-	self.modalLayer:addContentChild(tail, display.cx + bgOffsetX - 30, display.cy - 10, display.RIGHT_CENTER)
+	self.modalLayer:addContentChild(title, display.cx - bgOffsetX + 100, display.cy + 60, display.LEFT_CENTER)
+	self.modalLayer:addContentChild(content, display.cx - bgOffsetX + 100, display.cy + 10, display.LEFT_CENTER)
+	self.modalLayer:addContentChild(tail, display.cx + bgOffsetX - 100, display.cy - 50, display.RIGHT_CENTER)
 	self.modalLayer:addEventListener("onBackgroudTap", handler(self, self.onClose))
 
 	self:addChild(self.modalLayer:getView())
