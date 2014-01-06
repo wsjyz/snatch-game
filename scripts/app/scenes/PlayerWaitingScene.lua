@@ -29,7 +29,8 @@ local playerNameSetting = {
 }
 
 function PlayerWaitingScene:ctor(players)
-	self.players = players
+	echoInfo("init PlayerWaitingScene with players %s", json.encode(players))
+	self.players = players or {}
 	-- bg
 	CommonBackground.new(false):addTo(self)
 	--desk
@@ -53,10 +54,7 @@ function PlayerWaitingScene:ctor(players)
 	display.newSprite("#leizhu.png")
 	:align(display.CENTER_RIGHT, display.cx - 60, display.cy + 230)
 	:addTo(self)
-	--socket event listener
-	sockettcp:addEventListener("ON_OTHER_USER_COME_IN", handler(self, self.onOtherPlayerComeIn))
-	sockettcp:addEventListener("ON_OTHER_USER_LEFT", handler(self, self.onOtherPlayerLeft))
-
+	
 	self.settingMenu = app:createView("SettingMenu"):addTo(self)
 	self.settingMenu:addEventListener("goBack", handler(self, self.leftRoom))
 
@@ -94,12 +92,12 @@ end
 function PlayerWaitingScene:onOtherPlayerComeIn(event)
 	local player = event.data
 	if player.playerId == app.me.playerId then 
-		printf("my seat no %d", player.seatNo )
 		self.mySeat = player.seatNo 
 	end
 
-	printf("onOtherPlayerComeIn , player %s", json.encode(player))
 	local seatNo = ( player.seatNo or 0 ) + 1
+	printf("onOtherPlayerComeIn , player %s , seatNo %d", json.encode(player),seatNo)
+	printf("players %s", json.encode(self.players))
 	self.players[seatNo] = player
 	if not self.seats["seat_" .. seatNo] then
 		local x,y = seatPositons[seatNo].x,seatPositons[seatNo].y
@@ -123,8 +121,6 @@ function PlayerWaitingScene:onOtherPlayerLeft(event)
 		self.seats["seat_" .. seatNo] = nil
 		self.players[seatNo] = nil
 	end
-
-
 end
 
 function PlayerWaitingScene:checkGameStart()
@@ -135,14 +131,25 @@ function PlayerWaitingScene:checkGameStart()
 		--player animation for start
 		local animation = self:getCountdownAnimation()
 		self.initCountdown:playAnimationOnce(animation, false, function() 
-			app:loadTopicList(function() 
+			app:loadTopicList(function()
+				--todo enter game together
 				display.replaceScene(GameScene.new(self.players))
 			end)
 		end)
 		return true
 	end
-
 	return false
+end
+
+function PlayerWaitingScene:onEnter()
+	--socket event listener
+	sockettcp:addEventListener("ON_OTHER_USER_COME_IN", handler(self, self.onOtherPlayerComeIn))
+	sockettcp:addEventListener("ON_OTHER_USER_LEFT", handler(self, self.onOtherPlayerLeft))
+end
+
+function PlayerWaitingScene:onExit()
+	sockettcp:removeAllEventListenersForEvent("ON_OTHER_USER_COME_IN")
+	sockettcp:removeAllEventListenersForEvent("ON_OTHER_USER_LEFT")
 end
 
 return PlayerWaitingScene

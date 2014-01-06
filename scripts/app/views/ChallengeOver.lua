@@ -22,9 +22,10 @@ function ChallengeOver:ctor(winner,loser)
 	local offsetX = 170
 
 	local winnerView = self:newPlayerSprite(winner.male)
-	local winnerProgress = app:createView("ProgressBar", 50, "150/300",display.cx - offsetX, display.cy - bgOffsetY + 70)
+	local winnerExpText = string.format("%d/%d", winner.experience or 0 , winner.total or 300)
+	local winnerProgress = app:createView("ProgressBar", winner.currentExperience or 0, winnerExpText ,display.cx - offsetX, display.cy - bgOffsetY + 70)
 	local winnerTitle = ui.newTTFLabel({
-			text = winner.currentTitle,
+			text = winner.currentTitle or "进士",
 			color = ccc3(255, 245, 110)
 		})
 	local winnerName = ui.newTTFLabel({
@@ -40,12 +41,13 @@ function ChallengeOver:ctor(winner,loser)
 	self.modalLayer:addContentChild(winnerName,winnerLabelX , display.cy - bgOffsetY + 100, display.CENTER_LEFT)
 
 	local loserView = self:newPlayerSprite(loser.male)
-	local loserProgress = app:createView("ProgressBar", 20,"60/300",display.cx + offsetX, display.cy - bgOffsetY + 70)
+	local loserExpText = string.format("%d/%d", loser.experience or 0 , loser.total or 300)
+	local loserProgress = app:createView("ProgressBar", loser.currentExperience or 0,loserExpText,display.cx + offsetX, display.cy - bgOffsetY + 70)
 
 	self.modalLayer:addContentChild(loserView, display.cx + offsetX, display.cy + 30)
 	self.modalLayer:addContentChild(loserProgress)
 	local loserTitle = ui.newTTFLabel({
-			text = loser.currentTitle,
+			text = loser.currentTitle or "进士",
 			color = ccc3(255, 245, 110)
 		})
 	local loserName = ui.newTTFLabel({
@@ -62,6 +64,7 @@ function ChallengeOver:ctor(winner,loser)
 	local winLogo = display.newSprite("#win.png")
 	self.modalLayer:addContentChild(winLogo, winnerView:getPositionX(), winnerView:getPositionY(), display.LEFT_CENTER)
 
+	self.modalLayer:addEventListener("onClose", handler(self, self.onClose))
 	self:addChild(self.modalLayer:getView())
 end
 

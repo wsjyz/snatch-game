@@ -11,10 +11,15 @@ local imgOffsetX, imgOffsetY = 150,170
 local labelOffsetX, labelOffsetY = 60,50
 
 function GameScene:ctor(players)
-	printf("GameScene,players as follows : %s", json.encode(players))
-
 	app:createView("CommonBackground", false):addTo(self)
 	self.players = players
+
+	for _,player in ipairs(players) do
+		if player.playerId == app.me.playerId then
+			self.me = player
+			break
+		end
+	end
 
 	self.nextPlayerIndex = 3 --下一个挑战者的序号
 	self.currentTopicIndex = 1 --下一题的序号
@@ -73,10 +78,6 @@ function GameScene:ctor(players)
 
 	self:showTopic(self.currentTopicIndex)
 	self.hostCountdown:start()
-
-	--socket event listener
-	sockettcp:addEventListener("ON_ANSWER_COMPLETE",handler(self, self.onAnswerComplete))
-
 end
 
 function GameScene:setHost(host)
@@ -171,7 +172,6 @@ end
 
 function GameScene:setItemEnabled(enabled)
 	if self.itemContainers then
-		printf("set item Enabled %s", enabled)
 		for _,item in ipairs(self.itemContainers) do
 			item:setButtonEnabled(enabled)
 		end
@@ -221,6 +221,9 @@ function GameScene:markAnswer(item)
 	item:setButtonSelected(true)
 	if item.rightAnswer == 0 then
 		self.answerMarks[self.rightAnswerIndex]:show()
+		audio.playSound(GAME_SOUND["answerWrong"])
+	else
+		audio.playSound(GAME_SOUND["answerRight"])
 	end
 end
 
@@ -249,59 +252,74 @@ function GameScene:onAnswerComplete(event)
 		self:markAnswer(selectedItem)
 	end
 
-	local gameOver = function() 
-		--no more players ,game over
-		local winner = (self.isHostTurn and self.guest) or self.host
-		local winnerView = app:createView("Winner", winner):addTo(self)
-		winnerView:addEventListener("onClose", function() 
-			local winnerIsMe = winner.playerId == app.me.playerId
-			if winnerIsMe then
-				local lottery = app:createView("Lottery"):addTo(self) -- 抽奖
-				lottery:addEventListener("onSuccess",function()
-					--抽奖成功
-					local treasure = app:createView("Treasure"):addTo(self)
-					treasure:addEventListener("onClose",function()
-						-- todo
-						local shareInfo = app:createView("ShareInfo", app.currentAward):addTo(self)
-						shareInfo:addEventListener("onShare", function(e)
-							app:createView("SharePanel")
-						end)
-					end)
-				end)
-				lottery:addEventListener("onFailed", function()
-					--抽奖失败
-					local lotteryFaild = app:createView("LotteryFailed"):addTo(self)
-					lotteryFaild:addEventListener("onClose",function(e)
-						app:enterChooseAward(app.currentLevel)		 
-					end)
-				end)
-			else
-				app:enterChooseAward(app.currentLevel)
-			end
-		end)
-	end
-		
 	--delay for next topic
 	scheduler.performWithDelayGlobal(function() 
 		if selectedItem.rightAnswer == 0 then -- wrong
 			--ChallengeOver view
-
-			if self.nextPlayerIndex <= table.nums(self.players) then
-				if self.isHostTurn then 
-					self:setHost(self.players[self.nextPlayerIndex]) 
-				else
-					self:setGuest(self.players[self.nextPlayerIndex])
+			local getWinnerAndLoser = function() 
+					if self.isHostTurn then 
+						return self.guest,self.host
+					else
+						return self.host,self.guest
+					end
 				end
-				self.nextPlayerIndex = self.nextPlayerIndex + 1
-			else
-				gameOver()
-			end
+			local winner,loser = getWinnerAndLoser()
+			local challengeOver = app:createView("ChallengeOver",winner,loser):addTo(self,2)
+			challengeOver:addEventListener("onClose", function(e) 
+				if self.nextPlayerIndex <= table.nums(self.players) then
+					echoInfo("some lose game , try to find next one")
+					if self.isHostTurn then 
+						self:setHost(self.players[self.nextPlayerIndex]) 
+					else
+						self:setGuest(self.players[self.nextPlayerIndex])
+					end
+					self.nextPlayerIndex = self.nextPlayerIndex + 1
+					--next topic
+					self.currentTopicIndex = self.currentTopicIndex + 1
+					self:changeTurns()
+					self:showTopic()
+				else
+					--no more players ,game over
+					echoInfo("gameOver!!!!")
+					local winnerView = app:createView("Winner", winner):addTo(self)
+					winnerView:addEventListener("onClose", function() 
+						local winnerIsMe = winner.playerId == app.me.playerId
+						if winnerIsMe then
+							local lottery = app:createView("Lottery"):addTo(self) -- 抽奖
+							lottery:addEventListener("onSuccess",function()
+								--抽奖成功
+								audio.playSound(GAME_SOUND["win"])
+								local treasure = app:createView("Treasure"):addTo(self)
+								treasure:addEventListener("onClose",function()
+									local shareInfo = app:createView("ShareInfo", app.currentAward):addTo(self)
+									shareInfo:addEventListener("onShare", function(e)
+										--todo invode native shareSDK
+
+										app:enterChooseAward(app.currentLevel)
+									end)
+								end)
+							end)
+							lottery:addEventListener("onFailed", function()
+								--抽奖失败
+								local lotteryFaild = app:createView("LotteryFailed"):addTo(self)
+								audio.playSound(GAME_SOUND["failed"])
+								lotteryFaild:addEventListener("onClose",function(e)
+									app:enterChooseAward(app.currentLevel)		 
+								end)
+							end)
+						else
+							app:enterChooseAward(app.currentLevel)
+						end
+					end)
+				end
+			end)
+		else -- answer right
+			--next topic
+			self.currentTopicIndex = self.currentTopicIndex + 1
+			self:changeTurns()
+			self:showTopic()
 		end
-		--next topic
-		self.currentTopicIndex = self.currentTopicIndex + 1
-		self:changeTurns()
-		self:showTopic()
-	end,3)
+	end,2)
 end
 
 function GameScene:onTimeBurndown()
@@ -309,11 +327,38 @@ function GameScene:onTimeBurndown()
 	self:answer(item)
 end
 
+function GameScene:onEnter()
+	--socket event listener
+	sockettcp:addEventListener("ON_ANSWER_COMPLETE",handler(self, self.onAnswerComplete))
+	sockettcp:addEventListener("ON_OTHER_USER_LEFT", handler(self, self.onOtherPlayerLeft))
+end
 
 function GameScene:onExit()
+	sockettcp:removeAllEventListenersForEvent("ON_ANSWER_COMPLETE")
+	sockettcp:removeAllEventListenersForEvent("ON_OTHER_USER_LEFT")
+
 	if self.score > 0 then
 		--todo submit my score to server.
 	end
+	self:leftGame()
+	app.currentRoomId = nil
+end
+
+function GameScene:leftGame()
+	local data = clone(self.me)
+	data.roomId = app.currentRoomId
+	
+	printf("user left room ,send data %s", json.encode(data))
+	sockettcp:sendMessage(LEFT_ROOM_SERVICE, data)
+	app:enterChooseAward(app.currentLevel)
+end
+
+
+function GameScene:onOtherPlayerLeft(event)
+	printf("onOtherPlayerLeft called")
+	local player = event.data
+	local index = ( player.seatNo or 0 ) + 1
+	self.players[index] = nil
 end
 
 return GameScene
