@@ -5,7 +5,6 @@
 #include "support/CCNotificationCenter.h"
 #include "CCLuaEngine.h"
 #include <string>
-#include "C2DXShareSDK.h"
 
 using namespace std;
 using namespace cocos2d;
@@ -25,14 +24,6 @@ AppDelegate::~AppDelegate()
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
-    cn::sharesdk::C2DXShareSDK::open(CCString::create("102917b91a3a"), false);
-    
-    CCDictionary *sinaConfigDict = CCDictionary::create();
-    sinaConfigDict -> setObject(CCString::create("568898243"), "app_key");
-    sinaConfigDict -> setObject(CCString::create("38a4f8204cc784f81f9f0daaf31e02e3"), "app_secret");
-    sinaConfigDict -> setObject(CCString::create("http://www.sharesdk.cn"), "redirect_uri");
-    cn::sharesdk::C2DXShareSDK::setPlatformConfig(cn::sharesdk::C2DXPlatTypeSinaWeibo, sinaConfigDict);
-    
     // initialize director
     CCDirector *pDirector = CCDirector::sharedDirector();
     pDirector->setOpenGLView(CCEGLView::sharedOpenGLView());
@@ -48,13 +39,24 @@ bool AppDelegate::applicationDidFinishLaunching()
     CCLuaStack *pStack = pEngine->getLuaStack();
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    // load framework
     pStack->loadChunksFromZIP("res/framework_precompiled.zip");
+
+    // set script path
     string path = CCFileUtils::sharedFileUtils()->fullPathForFilename("scripts/main.lua");
 #else
-    string path = CCFileUtils::sharedFileUtils()->fullPathForFilename(getStartupScriptFilename().c_str());
+    // load framework
+    if (m_projectConfig.isLoadPrecompiledFramework())
+    {
+        const string precompiledFrameworkPath = SimulatorConfig::sharedDefaults()->getPrecompiledFrameworkPath();
+        pStack->loadChunksFromZIP(precompiledFrameworkPath.c_str());
+    }
+
+    // set script path
+    string path = CCFileUtils::sharedFileUtils()->fullPathForFilename(m_projectConfig.getScriptFileRealPath().c_str());
 #endif
 
-    int pos;
+    size_t pos;
     while ((pos = path.find_first_of("\\")) != std::string::npos)
     {
         path.replace(pos, 1, "/");
@@ -103,4 +105,9 @@ void AppDelegate::applicationWillEnterForeground()
     SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
     SimpleAudioEngine::sharedEngine()->resumeAllEffects();
     CCNotificationCenter::sharedNotificationCenter()->postNotification("APP_ENTER_FOREGROUND");
+}
+
+void AppDelegate::setProjectConfig(const ProjectConfig& config)
+{
+    m_projectConfig = config;
 }
