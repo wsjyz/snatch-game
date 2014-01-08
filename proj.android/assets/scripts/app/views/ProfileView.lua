@@ -61,8 +61,7 @@ function ProfileView:ctor()
 	local bgWidth = self:getContentSize().width
 	local bgHeight = self:getContentSize().height
 
-	-- TODO: temp comment
-	-- local player = app.me
+	local player = app.me
 
 	if player == nil then
 		player = self:getProfilePlayer()
@@ -72,7 +71,7 @@ function ProfileView:ctor()
 	local avatarImage = ((player.male == 1 and "#male.png") or "#female.png")
 	local avatar = display.newSprite(avatarImage, display.cx - 110, display.cy + 120):addTo(self)
 
-	local userName = ui.newTTFLabel({text = player.playerName, size = 24, color = ccc3(255, 255, 0)})
+	local userName = ui.newTTFLabel({text = player.nickName, size = 24, color = ccc3(255, 255, 0)})
 	:align(display.CENTER_LEFT, display.cx - 50, display.cy + 150) 
 	:addTo(self)
 

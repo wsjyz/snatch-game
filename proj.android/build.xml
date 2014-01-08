@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="copyLuaScript" default="build" basedir=".">
+    <property name = "script.dest.dir" value="assets/scripts/" />
+    <property name = "script.src.dir" value="../scripts/"/>
+	<target name="build">
+		<copy todir="${script.dest.dir}" overwrite="true" verbose="true">
+		    <fileset dir="${script.src.dir}"/>
+		</copy>
+	</target>
+
+</project>

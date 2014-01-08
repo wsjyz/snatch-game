@@ -19,24 +19,23 @@ function WinRankView:getRankList()
         { nickName = "王五", rmb = 220}
     }
 end
-function WinRankView:ctor()
+function WinRankView:ctor(rankList)
 	self.modalLayer = app:createView("CommonModalView")
-	local rankList = nil
 
-	HttpClient.new(function(result)
-		rankList = result
-	end,
-	getUrl(PRIZE_LIST_URL)):start()
-
-    if rankList == nil then
-        rankList = self:getRankList()
-    end
+	-- temp test code
+    -- if rankList == nil then
+    --     rankList = self:getRankList()
+    -- end
 
     -- add rank detail
     local startX = display.cx - 130
 	local startY = display.cy + 150
 
 	for i, rank in ipairs(rankList) do
+
+		if i > 3 then
+			break
+		end
 
 		--rank bg
 		local rankBg = display.newSprite("#rank_".. i ..".png")

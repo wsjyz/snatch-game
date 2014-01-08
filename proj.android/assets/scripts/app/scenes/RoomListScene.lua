@@ -49,15 +49,22 @@ function RoomListScene:quickStart()
 end
 
 function RoomListScene:enterRoom(award)
-	if not sockettcp then app:initSocket() end
-	app.currentAward = award
-	local data = clone(app.me)
-	data.awardId = award.awardId
+	local sendMsg = function()
+		app.currentAward = award
+		local data = clone(app.me)
+		data.awardId = award.awardId
 
-	sockettcp:addEventListener("ON_ENTER_ROOM", handler(self, self.onEnterRoom))
+		sockettcp:addEventListener("ON_ENTER_ROOM", handler(self, self.onEnterRoom))
 
-	printf("enterRoom send data %s", json.encode(data))
-	sockettcp:sendMessage(ENTER_ROOM_SERVICE, data)
+		printf("enterRoom send data %s", json.encode(data))
+		sockettcp:sendMessage(ENTER_ROOM_SERVICE, data)
+	end
+
+	if not sockettcp 
+		then app:initSocket(sendMsg) 
+	else
+		sendMsg()
+	end
 
 end
 

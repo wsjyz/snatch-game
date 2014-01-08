@@ -17,7 +17,8 @@ HALL_INFO_URL = "/hall/get"
 --award
 AWARD_LIST_URL = "/award/list/%d" --level
 LOTTERY_URL = "/award/win/%s/%s" --awardId,playerId
-PRIZE_LIST_URL = "/award/get-player-prize-list"
+PRIZE_LIST_URL = "/award/get-player-prize-list/%s/3"
+RANKING_LIST_URL = "/award/get-ranking-list/3"
 
 function getUrl(pattern, ...)
 	return string.format(SLS_SERVER_HOST .. pattern, ...)

@@ -2,8 +2,6 @@
 -- Author: Alex
 -- Date: 2013-12-14 23:45:37
 --
-local httpClient = import("..HttpClient")
-
 local AwardView = class("AwardView", function()
 	return display.newLayer()
 end)
@@ -16,23 +14,16 @@ function AwardView:getAwardList()
 			}
 end
 
-function AwardView:ctor()
+function AwardView:ctor(awardList)
 	cc.GameObject.extend(self):addComponent("components.behavior.EventProtocol"):exportMethods()
 
 	local bgWidth = self:getContentSize().width
 	local bgHeight = self:getContentSize().height
 
-	-- load award list
-	local awardList = nil
-
-	httpClient.new(function(result)
-					rankList = result
-					end,
-					getUrl(PRIZE_LIST_URL)):start()
-
-	if awardList == nil then
-		awardList = self:getAwardList()
-	end
+	-- test data
+	-- if awardList == nil then
+	-- 	awardList = self:getAwardList()
+	-- end
 
 	local startX = display.cx - 150
 	local startY = display.cy + 200

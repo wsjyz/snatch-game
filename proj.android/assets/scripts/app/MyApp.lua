@@ -47,14 +47,16 @@ function MyApp:loadTopicList(callback)
     end ,getUrl(TOPIC_LIST_URL, self.currentLevel)):start()
 end
 
-function MyApp:initSocket()
+function MyApp:initSocket(callback)
     HttpClient.new(function(hall) 
+        echoInfo("hall info %s,type %s", json.encode(hall),type(hall))
         if hall then
             MessageCenter.new(hall.host,hall.port)
+            if callback then callback() end
         else
             device.showAlert("提示", "服务器地址列表为空", {"确定"})
         end
-    end,getUrl(HALL_INFO_URL))
+    end,getUrl(HALL_INFO_URL)):start()
 end
 
 -- scene transition

@@ -34,3 +34,4 @@ proj.ios/standstill.xcodeproj/xcuserdata/Tanty.xcuserdatad/xcschemes/xcschememan
 
 *.apk
 proj.android/bin
+proj.android/.settings

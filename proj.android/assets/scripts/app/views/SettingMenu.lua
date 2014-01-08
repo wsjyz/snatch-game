@@ -2,7 +2,7 @@
 -- Author: ivan.vigoss@gmail.com
 -- Date: 2013-12-08 17:07:33
 --
-
+local httpClient = import("..HttpClient")
 local sharedDirector = CCDirector:sharedDirector()
 local SettingMenu = class("SettingMenu",function()
 	local node = display.newNode()
@@ -81,27 +81,46 @@ function SettingMenu:goBack_(event)
 end
 
 function SettingMenu:showRank_(event)
-	audio.playSound(GAME_SOUND["popup"])
-	local rankview = app:createView("WinRankView")
-	rankview:addEventListener("onClose", handler(self, self.onPopupClose))
-	if sharedDirector:getRunningScene() then
-		rankview:addTo(sharedDirector:getRunningScene(),3)
-	else
-		rankview:addTo(self,3)
-	end
-	self:dispatchEvent({name = "onPopup"})
+
+	httpClient.new(function(rankList)
+
+        if rankList ~= nil then        	
+        	-- enter profile center
+        	audio.playSound(GAME_SOUND["popup"])	
+			local rankview = app:createView("WinRankView", rankList)
+			rankview:addEventListener("onClose", handler(self, self.onPopupClose))
+			if sharedDirector:getRunningScene() then
+				rankview:addTo(sharedDirector:getRunningScene(),3)
+			else
+				rankview:addTo(self,3)
+			end
+			self:dispatchEvent({name = "onPopup"})
+
+        end
+    end,getUrl(RANKING_LIST_URL))    
+    :start()
+	
 end
 
 function SettingMenu:userInfo_(event)
-	audio.playSound(GAME_SOUND["popup"])
-	local profileview = app:createView("ProfileCenterView")
-	profileview:addEventListener("onClose", handler(self, self.onPopupClose))
-	if sharedDirector:getRunningScene() then
-		profileview:addTo(sharedDirector:getRunningScene(),3)
-	else
-		profileview:addTo(self,3)
-	end
-	self:dispatchEvent({name = "onPopup"})
+
+	httpClient.new(function(awardList)
+
+        if awardList ~= nil then        	
+        	-- enter profile center
+        	audio.playSound(GAME_SOUND["popup"])
+			local profileview = app:createView("ProfileCenterView", awardList)
+			profileview:addEventListener("onClose", handler(self, self.onPopupClose))
+			if sharedDirector:getRunningScene() then
+				profileview:addTo(sharedDirector:getRunningScene(),3)
+			else
+				profileview:addTo(self,3)
+			end
+			self:dispatchEvent({name = "onPopup"})
+
+        end
+    end,getUrl(PRIZE_LIST_URL, app.me.playerId))    
+    :start()	
 end
 
 function SettingMenu:onPopupClose()
@@ -109,7 +128,11 @@ function SettingMenu:onPopupClose()
 end
 
 function SettingMenu:volumeControl_(event)
-	app:enterQuizScene()
+	if device.platform == "ios" then
+		luaoc.callStaticMethod("SnsShareCenter", "share", { player = app.me })
+	elseif device.platform == "android" then
+		-- TODO
+	end
 end
 
 
