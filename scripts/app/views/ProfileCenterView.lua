@@ -2,6 +2,7 @@
 -- Author: Alex
 -- Date: 2013-12-29 13:35:44
 --
+local httpClient = import("..HttpClient")
 local ProfileView = import(".ProfileView")
 local AwardView = import(".AwardView")
 
@@ -26,11 +27,11 @@ ProfileCenterView.AWARD_BUTTON_IMAGES = {
     on_pressed = "#awa_pressed.png",
 }
 
-function ProfileCenterView:ctor()
+function ProfileCenterView:ctor(awardList)
     self.modalLayer = app:createView("CommonModalView")
     -- init profile and award view
     self.profileView = ProfileView.new() 
-    self.awardView = AwardView.new()
+    self.awardView = AwardView.new(awardList)
 
     self.awardView:setVisible(false)
    
