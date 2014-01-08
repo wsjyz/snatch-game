@@ -44,13 +44,42 @@ static AppDelegate s_sharedApplication;
 
     // import sns libs
     
-    //导入微信类型
-    [ShareSDK importWeChatClass:[WXApi class]];
+    [ShareSDK registerApp:@"102917b91a3a"];
     
-    //导入腾讯微博类型
+    //监听用户信息变更
+    [ShareSDK addNotificationWithName:SSN_USER_INFO_UPDATE
+                               target:self
+                               action:@selector(userInfoUpdateHandler:)];
+    
+    //导入腾讯微博需要的外部库类型，如果不需要腾讯微博SSO可以不调用此方法
     [ShareSDK importTencentWeiboClass:[WeiboApi class]];
     
-    [ShareSDK connectSinaWeiboWithAppKey:@"175861371" appSecret:@"0e0ea823b519147ff1a5a77372bf21e4" redirectUri:@"http://appgo.cn"];
+    //导入微信需要的外部库类型，如果不需要微信分享可以不调用此方法
+    [ShareSDK importWeChatClass:[WXApi class]];
+    
+    /**
+     连接新浪微博开放平台应用以使用相关功能，此应用需要引用SinaWeiboConnection.framework
+     http://open.weibo.com上注册新浪微博开放平台应用，并将相关信息填写到以下字段
+     **/
+    [ShareSDK connectSinaWeiboWithAppKey:@"2544998555"
+                               appSecret:@"2c5696128c61f79509b176819e3058f1"
+                             redirectUri:@"https://api.weibo.com/oauth2/default.html"];
+    /**
+     连接腾讯微博开放平台应用以使用相关功能，此应用需要引用TencentWeiboConnection.framework
+     http://dev.t.qq.com上注册腾讯微博开放平台应用，并将相关信息填写到以下字段
+     
+     如果需要实现SSO，需要导入libWeiboSDK.a，并引入WBApi.h，将WBApi类型传入接口
+     **/
+    [ShareSDK connectTencentWeiboWithAppKey:@"801463654"
+                                  appSecret:@"62232e55b2848876596a930eed7fe38b"
+                                redirectUri:@""
+                                   wbApiCls:[WeiboApi class]];
+    
+    /**
+     连接微信应用以使用相关功能，此应用需要引用WeChatConnection.framework和微信官方SDK
+     http://open.weixin.qq.com上注册应用，并将相关信息填写以下字段
+     **/
+    [ShareSDK connectWeChatWithAppId:@"wx78694382efe06249" wechatCls:[WXApi class]];
     
     // Add the view controller's view to the window and display.
     window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
@@ -80,6 +109,94 @@ static AppDelegate s_sharedApplication;
     cocos2d::CCApplication::sharedApplication()->run();
 
     return YES;
+}
+
+- (void)userInfoUpdateHandler:(NSNotification *)notif
+{
+    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()]];
+    if (authList == nil)
+    {
+        authList = [NSMutableArray array];
+    }
+    
+    NSString *platName = nil;
+    NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
+    switch (plat)
+    {
+        case ShareTypeSinaWeibo:
+            platName = @"新浪微博";
+            break;
+        case ShareType163Weibo:
+            platName = @"网易微博";
+            break;
+        case ShareTypeDouBan:
+            platName = @"豆瓣";
+            break;
+        case ShareTypeFacebook:
+            platName = @"Facebook";
+            break;
+        case ShareTypeKaixin:
+            platName = @"开心网";
+            break;
+        case ShareTypeQQSpace:
+            platName = @"QQ空间";
+            break;
+        case ShareTypeRenren:
+            platName = @"人人网";
+            break;
+        case ShareTypeSohuWeibo:
+            platName = @"搜狐微博";
+            break;
+        case ShareTypeTencentWeibo:
+            platName = @"腾讯微博";
+            break;
+        case ShareTypeTwitter:
+            platName = @"Twitter";
+            break;
+        case ShareTypeInstapaper:
+            platName = @"Instapaper";
+            break;
+        case ShareTypeYouDaoNote:
+            platName = @"有道云笔记";
+            break;
+        case ShareTypeGooglePlus:
+            platName = @"Google+";
+            break;
+        case ShareTypeLinkedIn:
+            platName = @"LinkedIn";
+            break;
+        default:
+            platName = @"未知";
+    }
+    
+    id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
+    BOOL hasExists = NO;
+    for (int i = 0; i < [authList count]; i++)
+    {
+        NSMutableDictionary *item = [authList objectAtIndex:i];
+        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+        if (type == plat)
+        {
+            [item setObject:[userInfo nickname] forKey:@"username"];
+            hasExists = YES;
+            break;
+        }
+    }
+    
+    if (!hasExists)
+    {
+        NSDictionary *newItem = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 platName,
+                                 @"title",
+                                 [NSNumber numberWithInteger:plat],
+                                 @"type",
+                                 [userInfo nickname],
+                                 @"username",
+                                 nil];
+        [authList addObject:newItem];
+    }
+    
+    [authList writeToFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()] atomically:YES];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
