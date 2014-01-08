@@ -116,7 +116,6 @@ function LoginForm:register()
 			male = self.male
 		}
 	httpClient.new(function(data)
-		--todo 
 			app.me = postData
 			app:enterChooseLevel()
 		end,

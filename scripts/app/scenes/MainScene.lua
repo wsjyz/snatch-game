@@ -25,8 +25,7 @@ function MainScene:ctor()
 end
 
 function MainScene:checkPlayer()
-    local playerId = "player" .. math.random(1,10)
-    -- local playerId = device.getOpenUDID()
+    local playerId = device.getOpenUDID()
     HttpClient.new(function(player) 
         if type(player) == "table" then
             app.me = player

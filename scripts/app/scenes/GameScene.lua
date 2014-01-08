@@ -2,6 +2,7 @@
 -- Author: ivan.vigoss@gmail.com
 -- Date: 2013-12-09 21:27:28
 --
+local HttpClient = import("..HttpClient")
 local GameScene = class("GameScene", function()
 	return display.newScene("GameScene")
 end)
@@ -338,7 +339,9 @@ function GameScene:onExit()
 	sockettcp:removeAllEventListenersForEvent("ON_OTHER_USER_LEFT")
 
 	if self.score > 0 then
-		--todo submit my score to server.
+		HttpClient.new(function(e) 
+			end,getUrl(PRIZE_LIST_URL,app.me.playerId,self.score))
+		:start()	
 	end
 	self:leftGame()
 	app.currentRoomId = nil

@@ -48,15 +48,13 @@ function MyApp:loadTopicList(callback)
 end
 
 function MyApp:initSocket()
-    -- HttpClient.new(function(hall) 
-
-        -- if hall then
-        --     MessageCenter.new(hall.host,hall.port)
-        -- else
-        --     device.showAlert("提示", "服务器地址列表为空", {"确定"})
-        -- end
-    -- end,getUrl(HALL_INFO_URL))
-    MessageCenter.new("127.0.0.1",9110)
+    HttpClient.new(function(hall) 
+        if hall then
+            MessageCenter.new(hall.host,hall.port)
+        else
+            device.showAlert("提示", "服务器地址列表为空", {"确定"})
+        end
+    end,getUrl(HALL_INFO_URL))
 end
 
 -- scene transition

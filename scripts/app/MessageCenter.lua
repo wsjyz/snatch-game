@@ -42,7 +42,6 @@ function MessageCenter:ctor(host,port)
 	--support event
 	cc.GameObject.extend(self)
     self:addComponent("components.behavior.EventProtocol"):exportMethods()
-    --todo http way get host & port
     if not self.socket_ then
     	self.host = host
     	self.port = port

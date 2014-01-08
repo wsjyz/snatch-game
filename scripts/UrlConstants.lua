@@ -2,13 +2,14 @@
 -- Author: ivan.vigoss@gmail.com
 -- Date: 2013-12-27 17:30:34
 --
-SLS_SERVER_HOST = "http://127.0.0.1:8089/sls"
+SLS_SERVER_HOST = "http://115.29.47.23:8080/sls"
 
 --URLS
 --player
 RANDOM_NAME_URL = "/player/randomName"
 PLAYER_INFO_URL = "/player/%s" --playerId
 RIGESTER_URL = "/player/register"
+UPDATE_EXT_URL = "/update-exp/%s/%d"
 --topic
 TOPIC_LIST_URL="/topic/random/%d" --level
 --hall
