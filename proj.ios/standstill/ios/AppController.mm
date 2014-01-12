@@ -72,7 +72,7 @@ static AppDelegate s_sharedApplication;
      **/
     [ShareSDK connectTencentWeiboWithAppKey:@"801463654"
                                   appSecret:@"62232e55b2848876596a930eed7fe38b"
-                                redirectUri:@""
+                                redirectUri:@"http://www.8hinfo.com"
                                    wbApiCls:[WeiboApi class]];
     
     /**

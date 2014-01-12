@@ -128,11 +128,21 @@ function SettingMenu:onPopupClose()
 end
 
 function SettingMenu:volumeControl_(event)
-	if device.platform == "ios" then
-		luaoc.callStaticMethod("SnsShareCenter", "share", { player = app.me })
-	elseif device.platform == "android" then
-		-- TODO
+	
+	if audio.getMusicVolume() == 0.0 then
+		audio.setMusicVolume(1.0)
+		audio.setSoundsVolume(1.0)
+	else
+		audio.setMusicVolume(0.0)
+		audio.setSoundsVolume(0.0)
 	end
+
+	-- TEST SHARE CODE
+	-- if device.platform == "ios" then
+	-- 	luaoc.callStaticMethod("SnsShareCenter", "share", { player = app.me })
+	-- elseif device.platform == "android" then
+	-- 	-- TODO
+	-- end
 end
 
 
