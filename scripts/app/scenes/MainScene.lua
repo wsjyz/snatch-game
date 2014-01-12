@@ -6,7 +6,10 @@ end)
 
 function MainScene:ctor()
     app:createView("CommonBackground"):addTo(self)
-
+          
+    display.newSprite("#desk1.png", display.cx, display.bottom + 140):addTo(self)
+    display.newSprite("#people.png", display.right - 200, display.cy):addTo(self)
+    
     self.startBtn = cc.ui.UIPushButton.new("#start.png"):onButtonClicked(function(e) 
             audio.playSound(GAME_SOUND["tapButton"])
             self:checkPlayer()
@@ -18,13 +21,11 @@ function MainScene:ctor()
         y = display.cy + 30,
         easing = "BOUNCEOUT"
     })
-        
-    display.newSprite("#desk1.png", display.cx, display.bottom + 140):addTo(self)
-    display.newSprite("#people.png", display.right - 200, display.cy):addTo(self)
 
 end
 
 function MainScene:checkPlayer()
+    -- local playerId = "player" .. math.random(1,10)
     local playerId = device.getOpenUDID()
     HttpClient.new(function(player) 
         if type(player) == "table" then
