@@ -48,11 +48,11 @@ function ProfileView:getProfilePlayer()
 end
 
 function ProfileView:setLabelValuesWithPlayer(player)
-	ProfileView.Labels[1].value = player.peopleName;
-	ProfileView.Labels[2].value = player.qq;
-	ProfileView.Labels[3].value = player.phone;
-	ProfileView.Labels[4].value = player.email;
-	ProfileView.Labels[5].value = player.address;
+	ProfileView.Labels[1].value = player.peopleName or "";
+	ProfileView.Labels[2].value = player.qq or "";
+	ProfileView.Labels[3].value = player.phone or "";
+	ProfileView.Labels[4].value = player.email or "";
+	ProfileView.Labels[5].value = player.address or "";
 end
 
 function ProfileView:ctor()
@@ -93,7 +93,7 @@ function ProfileView:ctor()
     
    	progress:setMidpoint(ccp(0,0))
    	progress:setBarChangeRate(ccp(1,0))
-   	progress:setPercentage(player.currentExperience)
+   	progress:setPercentage(player.currentExpRate)
 
    	-- set player label value
    	self:setLabelValuesWithPlayer(player)

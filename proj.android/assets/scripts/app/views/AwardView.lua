@@ -20,9 +20,9 @@ function AwardView:ctor(awardList)
 	local bgWidth = self:getContentSize().width
 	local bgHeight = self:getContentSize().height
 
-	-- test data
+	--test data
 	-- if awardList == nil then
-	-- 	awardList = self:getAwardList()
+		-- awardList = self:getAwardList()
 	-- end
 
 	local startX = display.cx - 150
@@ -50,6 +50,7 @@ function AwardView:ctor(awardList)
 		})
 		:onButtonClicked(function(e)
 			-- TODO： show url with detailHref
+			device.openURL(award.detailHref)
 		end)
 		:align(display.CENTER, startX + 320, startY - i * 100)
 		:addTo(self)

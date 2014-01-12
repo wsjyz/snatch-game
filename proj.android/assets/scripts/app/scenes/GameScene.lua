@@ -126,7 +126,8 @@ function GameScene:showTopic()
 		throw("error", "no more topic")
 	end
 	local topic = app.topicList[self.currentTopicIndex]
-	
+	echoInfo("show topic as follows : %s", json.encode(topic))
+
 	self:resetView()
 
 	--setup title label
@@ -142,27 +143,29 @@ function GameScene:showTopic()
 	:addTo(self)
 
 	--setup item label and answer mark
-	for _,item in ipairs(topic.options) do
-		local index = item.index
-		local container = self.itemContainers[index]
-		local itemLabel = ui.newTTFLabel({	
-			text = item.content
-		})
-		container.rightAnswer = item.right
-		container:setButtonLabel("off", itemLabel)
-		container:setButtonLabelAlignment(display.LEFT_CENTER)
-		container:setButtonLabelOffset(-140, 0)
-		container:setButtonEnabled(self:isMyTurn_())
+	if topic.options then
+		for _,item in ipairs(topic.options) do
+			local index = item.index
+			local container = self.itemContainers[index]
+			local itemLabel = ui.newTTFLabel({	
+				text = item.content
+			})
+			container.rightAnswer = item.right
+			container:setButtonLabel("off", itemLabel)
+			container:setButtonLabelAlignment(display.LEFT_CENTER)
+			container:setButtonLabelOffset(-140, 0)
+			container:setButtonEnabled(self:isMyTurn_())
 
-		if item.right == 1 then self.rightAnswerIndex = index end
+			if item.right == 1 then self.rightAnswerIndex = index end
 
-		local answerMarkImg = (item.right == 1 and "#correct.png") or "#error.png"
-		local markX,markY = container:getPositionX() - 140,container:getPositionY() + 6
-		--printf("answerMark position x : %d, y : %d", markX,markY)
-		local answerMark = display.newSprite(answerMarkImg, markX, markY)
-		:hide()
-		:addTo(self)
-		self.answerMarks[index] = answerMark
+			local answerMarkImg = (item.right == 1 and "#correct.png") or "#error.png"
+			local markX,markY = container:getPositionX() - 140,container:getPositionY() + 6
+			--printf("answerMark position x : %d, y : %d", markX,markY)
+			local answerMark = display.newSprite(answerMarkImg, markX, markY)
+			:hide()
+			:addTo(self)
+			self.answerMarks[index] = answerMark
+		end
 	end
 end
 
