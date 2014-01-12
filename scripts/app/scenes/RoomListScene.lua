@@ -124,7 +124,10 @@ function RoomListScene:onTapRoomIcon(event)
     		disabled = "#viewbtn_active.png"
 		})
 	:onButtonClicked(function(e) 
-		device.openURL("http://www.baidu.com")
+		if award.detailHref then 
+			device.openURL(award.detailHref)	
+		end
+		
 	end)
 	modalLayer:addContentChild(detail, display.cx + 5, display.cy - 120, display.CENTER_LEFT)
 

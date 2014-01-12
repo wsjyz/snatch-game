@@ -36,7 +36,7 @@ function RoomList:ctor(rect,roomlist)
 
     -- add indicators
     local x = (self:getClippingRect().size.width - RoomList.INDICATOR_MARGIN * (numPages - 1)) / 2 + 20 
-    local y = self:getClippingRect().origin.y + 80  
+    local y = self:getClippingRect().origin.y + 50  
 
     self.indicator_ = display.newSprite("#cell_selected.png")
     self.indicator_:setPosition(x, y)
