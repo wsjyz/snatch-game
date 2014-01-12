@@ -43,13 +43,17 @@
 		2FB9C7C31870062A002F2AD3 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FB9C7C21870062A002F2AD3 /* libz.1.2.5.dylib */; };
 		2FB9C7C9187017A0002F2AD3 /* SnsShareCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FB9C7C8187017A0002F2AD3 /* SnsShareCenter.mm */; };
 		2FEF3AD818823E24000B34B5 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FEF3AD718823E24000B34B5 /* libsqlite3.dylib */; };
+		2FEF3AE2188247FE000B34B5 /* app-icon-57x57.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FEF3ADB188247FE000B34B5 /* app-icon-57x57.png */; };
+		2FEF3AE3188247FE000B34B5 /* app-icon-72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FEF3ADC188247FE000B34B5 /* app-icon-72x72.png */; };
+		2FEF3AE4188247FE000B34B5 /* app-icon-76x76.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FEF3ADD188247FE000B34B5 /* app-icon-76x76.png */; };
+		2FEF3AE5188247FE000B34B5 /* app-icon-114x114.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FEF3ADE188247FE000B34B5 /* app-icon-114x114.png */; };
+		2FEF3AE6188247FE000B34B5 /* app-icon-120x120.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FEF3ADF188247FE000B34B5 /* app-icon-120x120.png */; };
+		2FEF3AE7188247FE000B34B5 /* app-icon-144x144.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FEF3AE0188247FE000B34B5 /* app-icon-144x144.png */; };
+		2FEF3AE8188247FE000B34B5 /* app-icon-152x152.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FEF3AE1188247FE000B34B5 /* app-icon-152x152.png */; };
 		F4323CF716D3298E0072B773 /* libquickcocos2dx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F48F590816D21F8C000651BE /* libquickcocos2dx.a */; };
 		F4482F2116A0555000FDDDAD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4482F1A16A0555000FDDDAD /* Default-568h@2x.png */; };
 		F4482F2216A0555000FDDDAD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = F4482F1B16A0555000FDDDAD /* Default.png */; };
 		F4482F2316A0555000FDDDAD /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4482F1C16A0555000FDDDAD /* Default@2x.png */; };
-		F4482F2416A0555000FDDDAD /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = F4482F1D16A0555000FDDDAD /* Icon-72.png */; };
-		F4482F2516A0555000FDDDAD /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = F4482F1E16A0555000FDDDAD /* Icon.png */; };
-		F4482F2616A0555000FDDDAD /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4482F1F16A0555000FDDDAD /* Icon@2x.png */; };
 		F452BFC51687EEF900DC5BCC /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F452BFC41687EEF900DC5BCC /* CoreText.framework */; };
 		F452BFD01687F0F200DC5BCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F452BFCF1687F0F200DC5BCC /* UIKit.framework */; };
 		F456ECC615EE018E00FCF3E2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F456ECC515EE018E00FCF3E2 /* QuartzCore.framework */; };
@@ -126,12 +130,16 @@
 		2FB9C7C7187017A0002F2AD3 /* SnsShareCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnsShareCenter.h; sourceTree = "<group>"; };
 		2FB9C7C8187017A0002F2AD3 /* SnsShareCenter.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = SnsShareCenter.mm; sourceTree = "<group>"; };
 		2FEF3AD718823E24000B34B5 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		2FEF3ADB188247FE000B34B5 /* app-icon-57x57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-57x57.png"; sourceTree = "<group>"; };
+		2FEF3ADC188247FE000B34B5 /* app-icon-72x72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-72x72.png"; sourceTree = "<group>"; };
+		2FEF3ADD188247FE000B34B5 /* app-icon-76x76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-76x76.png"; sourceTree = "<group>"; };
+		2FEF3ADE188247FE000B34B5 /* app-icon-114x114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-114x114.png"; sourceTree = "<group>"; };
+		2FEF3ADF188247FE000B34B5 /* app-icon-120x120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-120x120.png"; sourceTree = "<group>"; };
+		2FEF3AE0188247FE000B34B5 /* app-icon-144x144.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-144x144.png"; sourceTree = "<group>"; };
+		2FEF3AE1188247FE000B34B5 /* app-icon-152x152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-152x152.png"; sourceTree = "<group>"; };
 		F4482F1A16A0555000FDDDAD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		F4482F1B16A0555000FDDDAD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		F4482F1C16A0555000FDDDAD /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		F4482F1D16A0555000FDDDAD /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
-		F4482F1E16A0555000FDDDAD /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		F4482F1F16A0555000FDDDAD /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		F4482F2016A0555000FDDDAD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F4499C7116C7CDE20059FF37 /* quickcocos2dx.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = quickcocos2dx.xcodeproj; path = lib/proj.ios/quickcocos2dx.xcodeproj; sourceTree = QUICK_COCOS2DX_ROOT; };
 		F452BFC41687EEF900DC5BCC /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -387,12 +395,16 @@
 		F48ABAD516A057D000A60C5B /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				2FEF3ADB188247FE000B34B5 /* app-icon-57x57.png */,
+				2FEF3ADC188247FE000B34B5 /* app-icon-72x72.png */,
+				2FEF3ADD188247FE000B34B5 /* app-icon-76x76.png */,
+				2FEF3ADE188247FE000B34B5 /* app-icon-114x114.png */,
+				2FEF3ADF188247FE000B34B5 /* app-icon-120x120.png */,
+				2FEF3AE0188247FE000B34B5 /* app-icon-144x144.png */,
+				2FEF3AE1188247FE000B34B5 /* app-icon-152x152.png */,
 				F4482F1A16A0555000FDDDAD /* Default-568h@2x.png */,
 				F4482F1B16A0555000FDDDAD /* Default.png */,
 				F4482F1C16A0555000FDDDAD /* Default@2x.png */,
-				F4482F1D16A0555000FDDDAD /* Icon-72.png */,
-				F4482F1E16A0555000FDDDAD /* Icon.png */,
-				F4482F1F16A0555000FDDDAD /* Icon@2x.png */,
 				F4482F2016A0555000FDDDAD /* Info.plist */,
 			);
 			name = ios;
@@ -513,18 +525,22 @@
 				2F598A57187DCD130092AB1B /* ShareSDKiPhoneSimpleShareViewUI.bundle in Resources */,
 				F4482F2116A0555000FDDDAD /* Default-568h@2x.png in Resources */,
 				2F598A3F187DCD130092AB1B /* Resource.bundle in Resources */,
+				2FEF3AE3188247FE000B34B5 /* app-icon-72x72.png in Resources */,
 				F4482F2216A0555000FDDDAD /* Default.png in Resources */,
+				2FEF3AE8188247FE000B34B5 /* app-icon-152x152.png in Resources */,
+				2FEF3AE6188247FE000B34B5 /* app-icon-120x120.png in Resources */,
 				2F598A3E187DCD130092AB1B /* ShareSDKLocalizable.strings in Resources */,
+				2FEF3AE4188247FE000B34B5 /* app-icon-76x76.png in Resources */,
 				2F598A47187DCD130092AB1B /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
 				F4482F2316A0555000FDDDAD /* Default@2x.png in Resources */,
-				F4482F2416A0555000FDDDAD /* Icon-72.png in Resources */,
-				F4482F2516A0555000FDDDAD /* Icon.png in Resources */,
 				2F598A52187DCD130092AB1B /* ShareSDKiPadSimpleShareViewUI.bundle in Resources */,
 				2F598A55187DCD130092AB1B /* ShareSDKiPhoneDefaultShareViewUI.bundle in Resources */,
 				2F598A48187DCD130092AB1B /* RennSDK.bundle in Resources */,
-				F4482F2616A0555000FDDDAD /* Icon@2x.png in Resources */,
 				F4730C1E16C1509700280298 /* res in Resources */,
+				2FEF3AE5188247FE000B34B5 /* app-icon-114x114.png in Resources */,
+				2FEF3AE2188247FE000B34B5 /* app-icon-57x57.png in Resources */,
 				2F598A50187DCD130092AB1B /* ShareSDKiPadDefaultShareViewUI.bundle in Resources */,
+				2FEF3AE7188247FE000B34B5 /* app-icon-144x144.png in Resources */,
 				F4730C1F16C1509700280298 /* scripts in Resources */,
 				2F598A4B187DCD130092AB1B /* WeiboSDK.bundle in Resources */,
 			);
