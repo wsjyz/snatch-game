@@ -55,6 +55,22 @@ function ProfileView:setLabelValuesWithPlayer(player)
 	ProfileView.Labels[5].value = player.address or "";
 end
 
+function ProfileView:getRankingText(ranking)
+	if ranking == nil or ranking == 0 then
+		return "暂无排名"
+	else
+		return "当前排名:第" .. player.ranking .. "名"
+	end
+end
+
+function ProfileView:checkPlayerValue(player)
+
+	-- currentExpRate
+	if player.currentExpRate == nil then
+		player.currentExpRate = 0
+	end
+end
+
 function ProfileView:ctor()
 	cc.GameObject.extend(self):addComponent("components.behavior.EventProtocol"):exportMethods()
 
@@ -63,9 +79,11 @@ function ProfileView:ctor()
 
 	local player = app.me
 
-	if player == nil then
-		player = self:getProfilePlayer()
-	end
+	-- if player == nil then
+	-- 	player = self:getProfilePlayer()
+	-- end
+
+	self:checkPlayerValue(player)
 
 	--avatar
 	local avatarImage = ((player.male == 1 and "#male.png") or "#female.png")
@@ -76,7 +94,7 @@ function ProfileView:ctor()
 	:addTo(self)
 
 	-- add rank
-	local rank = ui.newTTFLabel({text = "当前排名:第" .. player.ranking .. "名", size = 24, color = display.COLOR_WHITE})
+	local rank = ui.newTTFLabel({text = self:getRankingText(player.ranking), size = 24, color = display.COLOR_WHITE})
 				:align(display.CENTER_LEFT, display.cx + 80, display.cy + 150) 
 				:addTo(self)
 			
