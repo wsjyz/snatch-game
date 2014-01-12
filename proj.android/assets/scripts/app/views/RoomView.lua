@@ -16,7 +16,7 @@ function RoomView:ctor(room,x,y)
 	ui.newTTFLabel({
 		text = room.awardName or "ROOM"
 		})
-	:align(display.CENTER, x, y + 72)
+	:align(display.CENTER, x, y + 75)
 	:addTo(self)
 
 end

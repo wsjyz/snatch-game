@@ -117,7 +117,7 @@ function PlayerWaitingScene:onOtherPlayerLeft(event)
 	local seatNo = ( player.seatNo or 0 ) + 1
 	local seat = self.seats["seat_" .. seatNo]
 	if seat then
-		seat.removeFromParent()
+		seat:removeFromParent()
 		self.seats["seat_" .. seatNo] = nil
 		self.players[seatNo] = nil
 	end
