@@ -42,6 +42,7 @@
 		2FB9C7C1187005F8002F2AD3 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FB9C7C0187005F8002F2AD3 /* libicucore.dylib */; };
 		2FB9C7C31870062A002F2AD3 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FB9C7C21870062A002F2AD3 /* libz.1.2.5.dylib */; };
 		2FB9C7C9187017A0002F2AD3 /* SnsShareCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FB9C7C8187017A0002F2AD3 /* SnsShareCenter.mm */; };
+		2FEF3AD818823E24000B34B5 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FEF3AD718823E24000B34B5 /* libsqlite3.dylib */; };
 		F4323CF716D3298E0072B773 /* libquickcocos2dx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F48F590816D21F8C000651BE /* libquickcocos2dx.a */; };
 		F4482F2116A0555000FDDDAD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4482F1A16A0555000FDDDAD /* Default-568h@2x.png */; };
 		F4482F2216A0555000FDDDAD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = F4482F1B16A0555000FDDDAD /* Default.png */; };
@@ -124,6 +125,7 @@
 		2FB9C7C21870062A002F2AD3 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		2FB9C7C7187017A0002F2AD3 /* SnsShareCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnsShareCenter.h; sourceTree = "<group>"; };
 		2FB9C7C8187017A0002F2AD3 /* SnsShareCenter.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = SnsShareCenter.mm; sourceTree = "<group>"; };
+		2FEF3AD718823E24000B34B5 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		F4482F1A16A0555000FDDDAD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		F4482F1B16A0555000FDDDAD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		F4482F1C16A0555000FDDDAD /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FEF3AD818823E24000B34B5 /* libsqlite3.dylib in Frameworks */,
 				2F598A5B187DCD970092AB1B /* MessageUI.framework in Frameworks */,
 				F456F0FD15EE0CF600FCF3E2 /* SystemConfiguration.framework in Frameworks */,
 				2F598A59187DCD860092AB1B /* Security.framework in Frameworks */,
@@ -346,6 +349,7 @@
 		F456ECC415EE018E00FCF3E2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2FEF3AD718823E24000B34B5 /* libsqlite3.dylib */,
 				2F598A5A187DCD970092AB1B /* MessageUI.framework */,
 				2FB9C7C21870062A002F2AD3 /* libz.1.2.5.dylib */,
 				2FB9C7C0187005F8002F2AD3 /* libicucore.dylib */,
@@ -656,6 +660,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer: yongfu yang (A3CL6M2UD6)";
@@ -718,7 +723,7 @@
 					"\"$(QUICK_COCOS2DX_ROOT)/lib/third_party\"",
 				);
 				INFOPLIST_FILE = standstill/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"\\\\\\\"$(QUICK_COCOS2DX_ROOT)/lib/cocos2d-x/cocos2dx/platform/third_party/ios/libraries\\\\\\\"",
 					"\\\\\\\"$(QUICK_COCOS2DX_ROOT)/lib/cocos2d-x/scripting/lua/luajit/ios\\\\\\\"",
@@ -739,7 +744,7 @@
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "armv7 arm64 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -748,6 +753,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer: yongfu yang (A3CL6M2UD6)";
@@ -808,7 +814,7 @@
 					"\"$(QUICK_COCOS2DX_ROOT)/lib/third_party\"",
 				);
 				INFOPLIST_FILE = standstill/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"\\\\\\\"$(QUICK_COCOS2DX_ROOT)/lib/cocos2d-x/cocos2dx/platform/third_party/ios/libraries\\\\\\\"",
 					"\\\\\\\"$(QUICK_COCOS2DX_ROOT)/lib/cocos2d-x/scripting/lua/luajit/ios\\\\\\\"",
@@ -830,7 +836,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "armv7 arm64 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
