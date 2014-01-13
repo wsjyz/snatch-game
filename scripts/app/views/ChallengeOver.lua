@@ -10,7 +10,7 @@ local ChallengeOver = class("ChallengeOver", function()
 end)
 
 function ChallengeOver:ctor(winner,loser)
-	self.modalLayer = app:createView("CommonModalView")
+	self.modalLayer = app:createView("CommonModalView",false)
 
 	local bgOffsetX,bgOffsetY = self.modalLayer:getOffsetPoint().x, self.modalLayer:getOffsetPoint().y
 	echoInfo("bgOffsetX %d,bgOffsetY %d", bgOffsetX,bgOffsetY)
@@ -66,6 +66,7 @@ function ChallengeOver:ctor(winner,loser)
 
 	self.modalLayer:addEventListener("onClose", handler(self, self.onClose))
 	self:addChild(self.modalLayer:getView())
+
 end
 
 function ChallengeOver:newPlayerSprite(male)
@@ -73,6 +74,11 @@ function ChallengeOver:newPlayerSprite(male)
 	return display.newSprite(img):scale(0.6)
 end
 
+function ChallengeOver:onEnter()
+	echoInfo("ChallengeOver onEnter() called")
+	--todo perform close delay
+	self.modalLayer:close(1)
+end
 
 function ChallengeOver:onClose()
 	self:dispatchEvent({name = "onClose"})

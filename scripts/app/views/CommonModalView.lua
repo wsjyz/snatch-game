@@ -3,6 +3,7 @@
 -- Date: 2013-12-18 16:37:54
 --
 local CommonModalView = class("CommonModalView")
+local scheduler = require(cc.PACKAGE_NAME .. ".scheduler")
 
 local ZORDER = 3
 
@@ -60,10 +61,22 @@ function CommonModalView:addContentChild(node,x,y,align)
 	node:align(align_, x, y):addTo(self.view,ZORDER)
 end
 
-function CommonModalView:close()
-	self.view:removeFromParent()
-	audio.playSound(GAME_SOUND["tapButton"])
-	self:dispatchEvent({name = "onClose"})
+function CommonModalView:close(delay)
+	local close_ = function()
+		self.view:removeFromParent()
+		audio.playSound(GAME_SOUND["tapButton"])
+		self:dispatchEvent({name = "onClose"})
+	end
+
+	if type(delay) ~= "number" then delay = 0 end
+	if delay > 0 then 
+		scheduler.performWithDelayGlobal(function() 
+				close_()
+			end, delay)
+	else 
+		close_()
+	end
+	
 end
 
 function CommonModalView:getContentSize()
