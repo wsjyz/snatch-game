@@ -30,7 +30,7 @@ local playerNameSetting = {
 
 function PlayerWaitingScene:ctor(players)
 	echoInfo("init PlayerWaitingScene with players %s", json.encode(players))
-	self.players = players or {}
+	self.players = {}
 	-- bg
 	CommonBackground.new(false):addTo(self)
 	--desk
@@ -57,14 +57,8 @@ function PlayerWaitingScene:ctor(players)
 	
 	self.settingMenu = app:createView("SettingMenu"):addTo(self)
 	self.settingMenu:addEventListener("goBack", handler(self, self.leftRoom))
-
-		--init player
-	for index, player in ipairs(players) do
-		local event = {}
-		event.data = player
-		local canStart = self:onOtherPlayerComeIn(event)
-		if canStart then break end
-	end
+	--init player
+	self:refreshUIWithPlayers(players)
 
 end
 
@@ -91,36 +85,50 @@ end
 
 function PlayerWaitingScene:onOtherPlayerComeIn(event)
 	local player = event.data
-	if player.playerId == app.me.playerId then 
-		self.mySeat = player.seatNo 
-	end
-
-	local seatNo = ( player.seatNo or 0 ) + 1
-	printf("onOtherPlayerComeIn , player %s , seatNo %d", json.encode(player),seatNo)
-	printf("players %s", json.encode(self.players))
-	self.players[seatNo] = player
-	if not self.seats["seat_" .. seatNo] then
-		local x,y = seatPositons[seatNo].x,seatPositons[seatNo].y
-		local seat = app:createView("PlayerView", player):addTo(self)
-		seat:imgPos(x, y - 20)
-		seat:labelPos(playerNameSetting[seatNo].align, playerNameSetting[seatNo].pos)
-
-		self.seats["seat_" .. seatNo] = seat
-	end
-	return self:checkGameStart()
+	echoInfo("onOtherPlayerComeIn called ,receive data : %s", json.encode(player))
+	self:createSeat(player)
+	self:checkGameStart()
 	
 end
 
-function PlayerWaitingScene:onOtherPlayerLeft(event)
-	printf("onOtherPlayerLeft called")
-	local player = event.data
+function PlayerWaitingScene:createSeat(player)
+	echoInfo("create seat %s", json.encode(player))
 	local seatNo = ( player.seatNo or 0 ) + 1
-	local seat = self.seats["seat_" .. seatNo]
-	if seat then
-		seat:removeFromParent()
-		self.seats["seat_" .. seatNo] = nil
-		self.players[seatNo] = nil
+	local x,y = seatPositons[seatNo].x,seatPositons[seatNo].y
+	local seat = app:createView("PlayerView", player):addTo(self)
+	seat:imgPos(x, y - 20)
+	seat:labelPos(playerNameSetting[seatNo].align, playerNameSetting[seatNo].pos)
+	self.seats[seatNo] = seat
+	self.players[seatNo] = player
+	return seat
+end
+
+function PlayerWaitingScene:clearSeat()
+	for seatNo,seat in pairs(self.seats) do
+		if seat then 
+			seat:removeSelf(true) 
+		end
 	end
+	self.seats = {}
+	self.players = {}
+end
+
+function PlayerWaitingScene:refreshUIWithPlayers(players)
+	if type(players) ~= "table" then return end
+	self:clearSeat()
+
+	for _,player in pairs(players) do
+		if app.me.playerId == player.playerId then self.mySeat = player.seatNo end
+		self:createSeat(player)
+	end
+	echoInfo("after refresh,players :%s,myseat %d", json.encode(self.players),self.mySeat)
+end
+
+
+function PlayerWaitingScene:onOtherPlayerLeft(event)
+	local players = event.data
+	printf("onOtherPlayerLeft called,received data : %s",json.encode(players))
+	self:refreshUIWithPlayers(players)
 end
 
 function PlayerWaitingScene:checkGameStart()

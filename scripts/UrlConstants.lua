@@ -2,7 +2,7 @@
 -- Author: ivan.vigoss@gmail.com
 -- Date: 2013-12-27 17:30:34
 --
-SLS_SERVER_HOST = "http://115.29.47.23:8080/sls"
+SLS_SERVER_HOST = "http://www.izhuangyuan.cn:8080/sls"
 -- SLS_SERVER_HOST = "http://192.168.0.96:8089/sls"
 
 --URLS
