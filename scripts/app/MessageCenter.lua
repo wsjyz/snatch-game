@@ -18,7 +18,7 @@ MessageCenter.EVENTS = {
 	ON_OTHER_USER_COME_IN = "onOtherUserComeIn",
 	ON_OTHER_USER_LEFT = "onOtherUserLeft",
 	ON_PLAYER_READY = "onPlayerReady",
-	ON_GAME_START = "onGameStart",
+	ON_GAME_START = "onPKReady",
 	ON_ANSWER_COMPLETE = "onAnswerComplete"
 }
 
@@ -45,7 +45,7 @@ function MessageCenter:ctor(host,port)
     if not self.socket_ then
     	self.host = host
     	self.port = port
-		self.socket_ = SocketTCP.new(self.host,self.port,true)
+		self.socket_ = SocketTCP.new(self.host,self.port,false)
 		--add event
 		self.socket_:addEventListener(SocketTCP.EVENT_CONNECTED, handler(self, self.onConnected))
 		self.socket_:addEventListener(SocketTCP.EVENT_CLOSE, handler(self,self.onStatus))
@@ -91,17 +91,27 @@ function MessageCenter:onData(__event)
 	echoInfo("socket status: %s, partial:%s", __event.name, ByteArray.toString(__event.data))
 	local __ba = ByteArray.new(ByteArray.ENDIAN_BIG)
 	__ba:writeBuf(__event.data)
-	__ba:setPos(1)
-	local headLength = __ba:readInt()
-	local eventName = string.trim(__ba:readStringBytes(30)) 
-	local params = json.decode(__ba:readStringBytes(headLength - 30))
+	local startPos = 1
+	while startPos < __ba:getLen() do
+		__ba:setPos(startPos)
+		local msgLen = self:processData_(__ba)
+		startPos = startPos + msgLen
+	end
+end
+
+function MessageCenter:processData_(byteArray)
+	local headLength = byteArray:readInt()
+	local eventName = string.trim(byteArray:readStringBytes(30)) 
+	local params = json.decode(byteArray:readStringBytes(headLength - 30))
 
 	local _event = table.keyOfItem(MessageCenter.EVENTS, eventName)
 	if _event then 
+		echoInfo("dispatchEvent event %s , with params %s , msgLength %d", eventName, json.encode(params) , headLength)
 		self:dispatchEvent({name = _event, data = params})
 	else
 		echoInfo("Can not find event for name %s" , eventName)
 	end
+	return headLength + 4
 end
 
 --serviceCode  values must be one of MessageCenter.ENTER_ROOM_SERVICE,MessageCenter.LEFT_ROOM_SERVICE etc.

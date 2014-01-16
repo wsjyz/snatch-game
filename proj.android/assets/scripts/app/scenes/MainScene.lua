@@ -5,7 +5,7 @@ local MainScene = class("MainScene", function()
 end)
 
 function MainScene:ctor()
-    app:createView("CommonBackground"):addTo(self)
+    app:createView("CommonBackground",false):addTo(self)
           
     display.newSprite("#desk1.png", display.cx, display.bottom + 140):addTo(self)
     display.newSprite("#people.png", display.right - 200, display.cy):addTo(self)

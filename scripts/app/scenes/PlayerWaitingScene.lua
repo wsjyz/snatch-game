@@ -87,8 +87,6 @@ function PlayerWaitingScene:onOtherPlayerComeIn(event)
 	local player = event.data
 	echoInfo("onOtherPlayerComeIn called ,receive data : %s", json.encode(player))
 	self:createSeat(player)
-	self:checkGameStart()
-	
 end
 
 function PlayerWaitingScene:createSeat(player)
@@ -131,33 +129,40 @@ function PlayerWaitingScene:onOtherPlayerLeft(event)
 	self:refreshUIWithPlayers(players)
 end
 
-function PlayerWaitingScene:checkGameStart()
-	if table.nums(self.seats) == 6 then
-		self.timerPlaceHolder:show() 
-		self.initCountdown:show()
-		self.settingMenu:hide()
-		--player animation for start
-		local animation = self:getCountdownAnimation()
-		self.initCountdown:playAnimationOnce(animation, false, function() 
-			app:loadTopicList(function()
-				--todo enter game together
-				display.replaceScene(GameScene.new(self.players))
-			end)
-		end)
-		return true
-	end
-	return false
+function PlayerWaitingScene:onGameStart()
+	echoInfo("onGameStart called , game will be started soon.")
+	self.timerPlaceHolder:show() 
+	self.initCountdown:show()
+	self.settingMenu:hide()
+	--player animation for start
+	local animation = self:getCountdownAnimation()
+	self.initCountdown:playAnimationOnce(animation, false, function() 
+			display.replaceScene(GameScene.new(self.players))
+	end)
 end
 
 function PlayerWaitingScene:onEnter()
 	--socket event listener
 	sockettcp:addEventListener("ON_OTHER_USER_COME_IN", handler(self, self.onOtherPlayerComeIn))
 	sockettcp:addEventListener("ON_OTHER_USER_LEFT", handler(self, self.onOtherPlayerLeft))
+	sockettcp:addEventListener("ON_GAME_START", handler(self,self.onGameStart))
+
+	app:loadTopicList(function()
+		local data = {
+			roomId = app.currentRoomId,
+			playerId = app.me.playerId
+		}
+		echoInfo("I'am ready! send message, %s", json.encode(data))
+		sockettcp:sendMessage(ON_READY_SERVICE, data)			
+	end)	
+	
+
 end
 
 function PlayerWaitingScene:onExit()
 	sockettcp:removeAllEventListenersForEvent("ON_OTHER_USER_COME_IN")
 	sockettcp:removeAllEventListenersForEvent("ON_OTHER_USER_LEFT")
+	sockettcp:removeAllEventListenersForEvent("ON_GAME_START")
 end
 
 return PlayerWaitingScene
