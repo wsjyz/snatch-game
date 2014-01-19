@@ -99,7 +99,7 @@ function ProfileView:ctor()
 				:addTo(self)
 			
 	-- add level
-	ui.newTTFLabel({text = player.currentTitle, size = 24, color = ccc3(255, 255, 0)})
+	ui.newTTFLabel({text = (player.currentTitle or ""), size = 24, color = ccc3(255, 255, 0)})
 		:align(display.CENTER_LEFT, display.cx - 50, display.cy + 100) 
 		:addTo(self)
 
