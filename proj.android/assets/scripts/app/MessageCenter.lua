@@ -84,7 +84,7 @@ function MessageCenter:onStatus(__event)
 end
 
 function MessageCenter:onConnectedFailure()
-	device.showAlert("提示", string.format("无法连接到服务器%s:%d", self.host,self.port), {"取消","重试"},function(event) 
+	device.showAlert("提示", string.format("无法连接到服务器"), {"取消","重试"},function(event) 
  		if event.buttonIndex == 1002 then self.socket_:connect() end
 	end)
 end
