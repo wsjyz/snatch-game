@@ -303,7 +303,7 @@ function GameScene:getWinnerAndLoser()
 	end
 end
 
-function GameScene:chanllegeOver(winner,loser)
+function GameScene:challengeOver(winner,loser)
 	local challengeOver = app:createView("ChallengeOver",winner,loser):addTo(self,2)
 	challengeOver:addEventListener("onClose", function(e) 
 		local hasNextPlayer = self:updateNextPlayer()

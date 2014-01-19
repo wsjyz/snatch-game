@@ -46,6 +46,11 @@ function WinRankView:ctor(rankList)
 		self.modalLayer:addContentChild(rankLabel, startX + 60, startY - i * 80, display.CENTER_LEFT)
 	end
 
+	if rankList == nil or table.nums(rankList) == 0 then
+		local nodataLabel = ui.newTTFLabel({text = "暂无排行榜数据", size = 36, color = ccc3(95, 41, 0)})
+		self.modalLayer:addContentChild(nodataLabel, startX + 120, startY - 80, display.CENTER)
+	end
+
 	--onclose
     self.modalLayer:addEventListener("onClose", handler(self, self.onClose))
 
