@@ -45,7 +45,7 @@ function MessageCenter:ctor(host,port)
     if not self.socket_ then
     	self.host = host
     	self.port = port
-		self.socket_ = SocketTCP.new(self.host,self.port,false)
+		self.socket_ = SocketTCP.new(self.host,self.port,true)
 		--add event
 		self.socket_:addEventListener(SocketTCP.EVENT_CONNECTED, handler(self, self.onConnected))
 		self.socket_:addEventListener(SocketTCP.EVENT_CLOSE, handler(self,self.onStatus))
@@ -72,7 +72,9 @@ function MessageCenter:onConnected()
 	if self.jobs then
 		for k,job in pairs(self.jobs) do
 			printf("proccess job %s", k)
-			coroutine.resume(job)
+			if job then
+				coroutine.resume(job)
+			end
 		end
 	end
 end
@@ -154,8 +156,8 @@ function MessageCenter:getServiceName_(serviceCode)
 	return string.format("%30s", name)
 end
 
-function MessageCenter:disconnect()
-	self.socket_:disconnect()
+function MessageCenter:close()
+	self.socket_:close()
 	sockettcp = nil
 end
 

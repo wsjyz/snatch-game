@@ -244,13 +244,10 @@ end
 
 function GameScene:updateNextPlayer()
 	local nextPlayer = nil
-	while type(nextPlayer) ~= "nil"  do -- loop to find next notnull player 
-		if self.nextPlayerIndex <= table.nums(self.players) then
-			nextPlayer = self.players[self.nextPlayerIndex]
-			self.nextPlayerIndex = self.nextPlayerIndex + 1
-		else
-			return false		
-		end
+	while type(nextPlayer) == "nil" and  self.nextPlayerIndex <= table.nums(self.players) do -- loop to find next notnull player 
+		echoInfo("found nextPlayerIndex %d", self.nextPlayerIndex)
+		nextPlayer = self.players[self.nextPlayerIndex]
+		self.nextPlayerIndex = self.nextPlayerIndex + 1
 	end
 
 	if nextPlayer then
@@ -259,11 +256,9 @@ function GameScene:updateNextPlayer()
 		else
 			self:setGuest(nextPlayer)
 		end
-		return true
-	else
-		return false
 	end
-	
+
+	return type(nextPlayer) ~= "nil"
 end
 
 --event listener
@@ -379,7 +374,8 @@ function GameScene:leftGame()
 	local data = clone(self.me)
 	data.roomId = app.currentRoomId
 	
-	sockettcp:sendMessage(LEFT_ROOM_SERVICE, data)
+	-- sockettcp:sendMessage(LEFT_ROOM_SERVICE, data)
+	sockettcp:close()
 	app:enterChooseAward(app.currentLevel)
 end
 

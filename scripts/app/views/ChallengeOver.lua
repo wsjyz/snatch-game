@@ -75,9 +75,8 @@ function ChallengeOver:newPlayerSprite(male)
 end
 
 function ChallengeOver:onEnter()
-	echoInfo("ChallengeOver onEnter() called")
-	--todo perform close delay
-	self.modalLayer:close(1)
+	echoInfo("ChallengeOver onEnter() called，dialog will be close on 1s later")
+	self.modalLayer:close(2)
 end
 
 function ChallengeOver:onClose()

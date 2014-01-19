@@ -60,8 +60,8 @@ function RoomListScene:enterRoom(award)
 		sockettcp:sendMessage(ENTER_ROOM_SERVICE, data)
 	end
 
-	if not sockettcp 
-		then app:initSocket(sendMsg) 
+	if not sockettcp then 
+		app:initSocket(sendMsg) 
 	else
 		sendMsg()
 	end

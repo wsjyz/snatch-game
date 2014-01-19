@@ -58,7 +58,7 @@ function AwardView:ctor(awardList)
 	end	
 
 	if awardList == nil or table.nums(awardList) == 0 then
-		ui.newTTFLabel({text = "暂无领奖信息", size = 32, color = display.COLOR_WHITE, dimensions = CCSize(200, 30)})
+		ui.newTTFLabel({text = "暂无领奖信息", size = 32, color = display.COLOR_WHITE, dimensions = CCSize(200, 50)})
 		:align(display.CENTER_LEFT, startX + 100, startY - 180) 
 		:addTo(self)
 	end
