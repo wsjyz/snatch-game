@@ -8,7 +8,7 @@ local GameScene = class("GameScene", function()
 end)
 local scheduler = require(cc.PACKAGE_NAME .. ".scheduler")
 
-local imgOffsetX, imgOffsetY = 150,170
+local imgOffsetX, imgOffsetY = 150,150
 local labelOffsetX, labelOffsetY = 60,50
 
 function GameScene:ctor(players)
@@ -33,23 +33,23 @@ function GameScene:ctor(players)
 	self:setHost(players[1])
 	--host countdown
 	self.hostCountdown = app:createView("Countdown", 20)
-	:align(display.LEFT_CENTER, display.left + imgOffsetX + labelOffsetX, display.top - imgOffsetY + 10)
+	:align(display.LEFT_CENTER, display.left + imgOffsetX + labelOffsetX, display.cy + imgOffsetY - 20)
 	:addTo(self)
 	self.hostCountdown:addEventListener("onTimeBurndown", handler(self, self.onTimeBurndown))
 
 	self:setGuest(players[2])
 	--guest countdown
 	self.guestCountdown = app:createView("Countdown", 20)
-	:align(display.RIGHT_CENTER, display.right - imgOffsetX - labelOffsetX, display.top - imgOffsetY + 10 )
+	:align(display.RIGHT_CENTER, display.right - imgOffsetX - labelOffsetX, display.cy + imgOffsetY - 20)
 	:hide()
 	:addTo(self)
 	self.guestCountdown:addEventListener("onTimeBurndown", handler(self, self.onTimeBurndown))
 
-	local vsContainer = display.newSprite("#vs_container.png", display.cx, display.top - 120):addTo(self)
-	local vs = display.newSprite("#vs1.png", display.cx, display.top - 150):addTo(self)
+	local vsContainer = display.newSprite("#vs_container.png", display.cx, display.cy + imgOffsetY + 30):addTo(self)
+	local vs = display.newSprite("#vs1.png", display.cx, display.cy + imgOffsetY ):addTo(self)
 
 	local leizhu = display.newSprite("#leizhu.png")
-	:align(display.LEFT_CENTER, display.left + imgOffsetX + 50, display.top - imgOffsetY + 90)
+	:align(display.LEFT_CENTER, display.left + imgOffsetX + 50, display.cy + imgOffsetY + 80)
 	:addTo(self)
 
 	--content
@@ -87,8 +87,8 @@ function GameScene:setHost(host)
 		self.hostView:removeSelf()
 	end
 	self.hostView = app:createView("PlayerView", self.host)
-	:imgPos(display.left + imgOffsetX, display.top - imgOffsetY, true)
-	:labelPos(display.LEFT_CENTER, CCPoint(display.left + imgOffsetX + labelOffsetX, display.top - imgOffsetY + labelOffsetY))
+	:imgPos(display.left + imgOffsetX, display.cy + imgOffsetY, true)
+	:labelPos(display.LEFT_CENTER, CCPoint(display.left + imgOffsetX + labelOffsetX, display.cy + imgOffsetY + 30))
 	:addTo(self)
 end
 
@@ -98,8 +98,8 @@ function GameScene:setGuest(guest)
 		self.guestView:removeSelf()
 	end
 	self.guestView = app:createView("PlayerView", self.guest)
-	:imgPos(display.right - imgOffsetX, display.top - imgOffsetY, true)
-	:labelPos(display.RIGHT_CENTER, CCPoint(display.right - imgOffsetX - labelOffsetX,display.top - imgOffsetY + labelOffsetY))
+	:imgPos(display.right - imgOffsetX, display.cy + imgOffsetY, true)
+	:labelPos(display.RIGHT_CENTER, CCPoint(display.right - imgOffsetX - labelOffsetX,display.cy + imgOffsetY + 30))
 	:addTo(self)
 end
 
@@ -301,13 +301,26 @@ end
 function GameScene:challengeOver(winner,loser)
 	local challengeOver = app:createView("ChallengeOver",winner,loser):addTo(self,2)
 	challengeOver:addEventListener("onClose", function(e) 
+		if self.score > 0 then
+			HttpClient.new(function(e)
+					self.score = 0 -- reset 
+				end,getUrl(PRIZE_LIST_URL,app.me.playerId,self.score))
+			:start()	
+		end
 		local hasNextPlayer = self:updateNextPlayer()
 		if hasNextPlayer == true then
 			echoInfo("some lose game , try to find next one")
-			--next topic
-			self.currentTopicIndex = self.currentTopicIndex + 1
-			self:changeTurns()
-			self:showTopic()
+			--todo loser's view when lost game.
+			local loserIsMe = loser.playerId == app.me.playerId
+			if loserIsMe then
+				app:enterChooseAward(app.currentLevel)
+			else
+				--next topic
+				self.currentTopicIndex = self.currentTopicIndex + 1
+				self:changeTurns()
+				self:showTopic()	
+			end
+
 		else
 			--no more players ,game over
 			echoInfo("gameOver!!!!")
@@ -323,9 +336,7 @@ function GameScene:challengeOver(winner,loser)
 						treasure:addEventListener("onClose",function()
 							local shareInfo = app:createView("ShareInfo", app.currentAward):addTo(self)
 							shareInfo:addEventListener("onShare", function(e)
-								--todo invode native shareSDK
-
-								app:enterChooseAward(app.currentLevel)
+								self:showSharePanel()
 							end)
 						end)
 					end)
@@ -334,7 +345,7 @@ function GameScene:challengeOver(winner,loser)
 						local lotteryFaild = app:createView("LotteryFailed"):addTo(self)
 						audio.playSound(GAME_SOUND["failed"])
 						lotteryFaild:addEventListener("onClose",function(e)
-							app:enterChooseAward(app.currentLevel)		 
+							app:enterChooseAward(app.currentLevel)
 						end)
 					end)
 				else
@@ -343,6 +354,25 @@ function GameScene:challengeOver(winner,loser)
 			end)
 		end
 	end)	
+end
+
+function GameScene:showSharePanel()
+	if device.platform == "android" then
+		local javaClassName = "com.eighthinfo.snatch.MainActivity"
+		local javaMethodName = "showSharePanel"
+		local javaParams = {
+			app.currentAward.awardName,
+			function(event)
+				if event == "onComplete" then
+					app:enterChooseAward(app.currentLevel)  
+				end
+			end
+		}
+		local javaMethodSig = "(Ljava/lang/String;I)V"
+		luaj.callStaticMethod(javaClassName, javaMethodName, javaParams, javaMethodSig)
+	else
+
+	end
 end
 
 function GameScene:onTimeBurndown()
@@ -360,12 +390,7 @@ function GameScene:onExit()
 	sockettcp:removeAllEventListenersForEvent("ON_ANSWER_COMPLETE")
 	sockettcp:removeAllEventListenersForEvent("ON_OTHER_USER_LEFT")
 
-	--todo save score when chanllegeOver close
-	if self.score > 0 then
-		HttpClient.new(function(e) 
-			end,getUrl(PRIZE_LIST_URL,app.me.playerId,self.score))
-		:start()	
-	end
+
 	self:leftGame()
 	app.currentRoomId = nil
 end
@@ -373,10 +398,8 @@ end
 function GameScene:leftGame()
 	local data = clone(self.me)
 	data.roomId = app.currentRoomId
-	
-	-- sockettcp:sendMessage(LEFT_ROOM_SERVICE, data)
+	sockettcp:sendMessage(LEFT_ROOM_SERVICE, data)
 	sockettcp:close()
-	app:enterChooseAward(app.currentLevel)
 end
 
 

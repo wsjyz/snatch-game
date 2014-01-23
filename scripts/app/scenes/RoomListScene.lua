@@ -127,7 +127,6 @@ function RoomListScene:onTapRoomIcon(event)
 		if award.detailHref then 
 			device.openURL(award.detailHref)	
 		end
-		
 	end)
 	modalLayer:addContentChild(detail, display.cx + 5, display.cy - 120, display.CENTER_LEFT)
 

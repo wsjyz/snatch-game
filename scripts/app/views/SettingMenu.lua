@@ -89,8 +89,8 @@ function SettingMenu:showRank_(event)
         	audio.playSound(GAME_SOUND["popup"])	
 			local rankview = app:createView("WinRankView", rankList)
 			rankview:addEventListener("onClose", handler(self, self.onPopupClose))
-			if sharedDirector:getRunningScene() then
-				rankview:addTo(sharedDirector:getRunningScene(),3)
+			if display.getRunningScene() then
+				rankview:addTo(display.getRunningScene(),3)
 			else
 				rankview:addTo(self,3)
 			end
@@ -111,8 +111,8 @@ function SettingMenu:userInfo_(event)
         	audio.playSound(GAME_SOUND["popup"])
 			local profileview = app:createView("ProfileCenterView", awardList)
 			profileview:addEventListener("onClose", handler(self, self.onPopupClose))
-			if sharedDirector:getRunningScene() then
-				profileview:addTo(sharedDirector:getRunningScene(),3)
+			if display.getRunningScene() then
+				profileview:addTo(display.getRunningScene(),3)
 			else
 				profileview:addTo(self,3)
 			end

@@ -38,6 +38,7 @@ proj.android/.settings
 
 proj.android/.classpath
 
-proj.android/gen/com/eighthinfo/snatch/R.java
+proj.android/gen
+proj.android/bin
 
-proj.android/gen/com/eighthinfo/snatch/R.java
+*.class

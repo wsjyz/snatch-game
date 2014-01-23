@@ -1,5 +1,6 @@
 
 local HttpClient = import("..HttpClient")
+local GameScene = import(".GameScene")
 local MainScene = class("MainScene", function()
     return display.newScene("MainScene")
 end)
