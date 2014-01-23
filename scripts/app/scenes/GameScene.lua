@@ -370,8 +370,10 @@ function GameScene:showSharePanel()
 		}
 		local javaMethodSig = "(Ljava/lang/String;I)V"
 		luaj.callStaticMethod(javaClassName, javaMethodName, javaParams, javaMethodSig)
+	else if device.platform == "ios" then
+		luaoc.callStaticMethod("SnsShareCenter", "share", { awardName = app.currentAward.awardName })
 	else
-
+		
 	end
 end
 
