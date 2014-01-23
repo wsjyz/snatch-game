@@ -59,6 +59,10 @@ function MyApp:initSocket(callback)
     end,getUrl(HALL_INFO_URL)):start()
 end
 
+function MyApp:loadImageAsync(url)
+    
+end
+
 -- scene transition
 function MyApp:enterLoginScene()
    self:enterScene("LoginScene") 
