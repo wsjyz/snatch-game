@@ -5,9 +5,12 @@ require("framework.init")
 require("framework.shortcodes")
 require("framework.cc.init")
 
+lfs       = require("lfs")
+
 local MyApp = class("MyApp", cc.mvc.AppBase)
 local HttpClient = import(".HttpClient")
 local MessageCenter = import(".MessageCenter")
+
 
 function MyApp:ctor()
     MyApp.super.ctor(self)
@@ -43,8 +46,8 @@ function MyApp:loadTopicList(callback)
         self.topicList = topicList
         if callback and type(callback) == "function" then
             callback() 
-         end
-    end ,getUrl(TOPIC_LIST_URL, self.currentLevel)):start()
+        end
+        end ,getUrl(TOPIC_LIST_URL, self.currentLevel)):start()
 end
 
 function MyApp:initSocket(callback)
@@ -56,28 +59,49 @@ function MyApp:initSocket(callback)
         else
             device.showAlert("提示", "服务器地址列表为空", {"确定"})
         end
-    end,getUrl(HALL_INFO_URL)):start()
+        end,getUrl(HALL_INFO_URL)):start()
 end
 
-function MyApp:loadImageAsync(url)
-    
+function MyApp:loadImageAsync(url,callback)
+    local fileinfo = function(path)
+        local filename = crypto.md5(path)
+        local fileinfo = io.pathinfo(path)
+        local basePath = device.writablePath .. "res/cache/"
+        local realpath = basePath .. filename .. fileinfo.extname
+
+        lfs.mkdir(basePath)
+        return io.exists(realpath),realpath,filename .. fileinfo.extname
+    end
+
+    local exists,filepath,filename = fileinfo(url)
+    if exists then
+        display.addImageAsync(filepath, callback)
+    else
+        HttpClient.new(function(content) 
+            local saveResult = io.writefile(filepath, content)
+            echoInfo("writefile to %s , result %s", filepath ,saveResult)
+            if saveResult then
+                display.addImageAsync(filepath, callback)
+            end
+        end,url,nil,"byte"):start() 
+    end
 end
 
 -- scene transition
 function MyApp:enterLoginScene()
-   self:enterScene("LoginScene") 
+ self:enterScene("LoginScene") 
 end
 
 function MyApp:enterChooseLevel()
     self.currentLevel = 1  -- default
-	self:enterScene("ChooseLevelScene")
+    self:enterScene("ChooseLevelScene")
 end
 
 function MyApp:enterChooseAward(level)
     audio.playMusic(GAME_MUSIC.game)
     self.currentLevel = level
-	local args = {level}
-	self:enterScene("RoomListScene", args)
+    local args = {level}
+    self:enterScene("RoomListScene", args)
 end
 
 function MyApp:enterGameScene()

@@ -31,6 +31,7 @@ import org.cocos2dx.lib.Cocos2dxLuaJavaBridge;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
@@ -76,22 +77,21 @@ public class MainActivity extends Cocos2dxActivity {
 
 			@Override
 			public void onCancel(Platform arg0, int arg1) {
-				// TODO Auto-generated method stub
 				Log.i("MainActivity", "onCancel");
+				Cocos2dxLuaJavaBridge.callLuaFunctionWithString(luaFunction, "onCancel");
 			}
 
 			@Override
 			public void onComplete(Platform arg0, int arg1,
 					HashMap<String, Object> arg2) {
-				//TODO call lua function
 				Log.i("MainActivity", "onComplete");
 				Cocos2dxLuaJavaBridge.callLuaFunctionWithString(luaFunction, "onComplete");
 			}
 
 			@Override
 			public void onError(Platform platform, int arg1, Throwable e) {
-				// TODO Auto-generated method stub
 				Log.e("MainActivity", "onError",e);
+				Toast.makeText(getContext(), "分享失败", Toast.LENGTH_LONG).show();
 				Cocos2dxLuaJavaBridge.callLuaFunctionWithString(luaFunction, "onError");
 			}
     		 

@@ -40,5 +40,9 @@ proj.android/.classpath
 
 proj.android/gen
 proj.android/bin
+res/cache
+*.class
+
+*.class
 
 *.class

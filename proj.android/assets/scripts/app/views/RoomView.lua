@@ -4,7 +4,7 @@
 --
 local RoomView = class("RoomView", function()
 	return display.newNode()
-end)
+	end)
 
 function RoomView:ctor(room,x,y)
 	local x = x or display.cx
@@ -19,6 +19,14 @@ function RoomView:ctor(room,x,y)
 	:align(display.CENTER, x, y + 75)
 	:addTo(self)
 
+	if room.bgHref then
+		app:loadImageAsync(room.bgHref, function(event, texture) 
+			local awardBg = CCSpriteExtend.extend(CCSprite:createWithTexture(texture))
+			awardBg:pos(x, y - 18)
+			:scale(0.7)
+			:addTo(self)
+		end)	
+	end
 end
 
 function RoomView:getBoundingBox()

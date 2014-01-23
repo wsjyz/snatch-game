@@ -12,13 +12,18 @@ end)
 function Treasure:ctor()
 	self.modalLayer = app:createView("CommonModalView",false)
 
-	local treasure = display.newSprite("#chest.png")
-	self.modalLayer:addContentChild(treasure,display.cx,display.cy)
-
+	if app.currentAward ~= nil and app.currentAward.bgHref ~= nil then
+		app:loadImageAsync(app.currentAward.bgHref, function(event, texture) 
+			local awardBg = CCSpriteExtend.extend(CCSprite:createWithTexture(texture))
+			self.modalLayer:addContentChild(awardBg,display.cx,display.cy)		
+		end)
+	else
+		local treasure = display.newSprite("#chest.png")
+		self.modalLayer:addContentChild(treasure,display.cx,display.cy)
+	end
 	self.modalLayer:addEventListener("onBackgroudTap", handler(self, self.onClose))
 
 	self:addChild(self.modalLayer:getView())
-
 end
 
 function Treasure:onClose()

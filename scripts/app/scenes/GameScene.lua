@@ -46,7 +46,15 @@ function GameScene:ctor(players)
 	self.guestCountdown:addEventListener("onTimeBurndown", handler(self, self.onTimeBurndown))
 
 	local vsContainer = display.newSprite("#vs_container.png", display.cx, display.cy + imgOffsetY + 30):addTo(self)
-	local vs = display.newSprite("#vs1.png", display.cx, display.cy + imgOffsetY ):addTo(self)
+	local vs = display.newSprite("#vs1.png", display.cx, display.cy + imgOffsetY ):addTo(self,1)
+	if app.currentAward ~= nil and app.currentAward.bgHref ~= nil then
+		app:loadImageAsync(app.currentAward.bgHref, function(event, texture) 
+			local awardBg = CCSpriteExtend.extend(CCSprite:createWithTexture(texture))
+			awardBg:pos(display.cx, display.cy + imgOffsetY + 30)
+			:scale(0.6)
+			:addTo(self)
+		end)
+	end
 
 	local leizhu = display.newSprite("#leizhu.png")
 	:align(display.LEFT_CENTER, display.left + imgOffsetX + 50, display.cy + imgOffsetY + 80)
