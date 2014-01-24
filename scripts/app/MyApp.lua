@@ -63,13 +63,53 @@ function MyApp:initSocket(callback)
 end
 
 function MyApp:loadImageAsync(url,callback)
+    local dirinfo = function (dirpath)
+        local pos = string.len(dirpath)
+        if string.byte(dirpath,pos) == 47 then
+            dirpath = string.sub(dirpath, 1, pos - 1)
+        end
+        while pos > 0 do
+            local b = string.byte(dirpath,pos)
+            if b == 47 and pos ~= string.len(dirpath) then break end
+            pos = pos - 1
+        end
+        local basedir_name = string.sub(dirpath, 1, pos)
+        local dirname = string.sub(dirpath, pos + 1)
+        return basedir_name,dirname
+    end
+    
+    local mkdirs = function(path)
+        local p = path
+        local t = {}
+
+        while lfs.chdir(p) == nil do
+            local basedir_name,dirname = dirinfo(p)
+            table.insert(t,dirname)
+            p = basedir_name 
+        end
+
+        local i = table.nums(t)
+        while i > 0  do
+            echoInfo("====add %s to %s", t[i] , lfs.currentdir())
+            lfs.mkdir(t[i])
+            local r,m = lfs.chdir(lfs.currentdir() .. device.directorySeparator .. t[i])
+            if r == nil then break end
+            i = i -1
+        end
+
+    end
+
     local fileinfo = function(path)
         local filename = crypto.md5(path)
         local fileinfo = io.pathinfo(path)
         local basePath = device.writablePath .. "res/cache/"
         local realpath = basePath .. filename .. fileinfo.extname
 
-        lfs.mkdir(basePath)
+        local r,m = lfs.chdir(basePath)
+        if r == nil then
+            mkdirs(basePath)
+        end
+
         return io.exists(realpath),realpath,filename .. fileinfo.extname
     end
 
